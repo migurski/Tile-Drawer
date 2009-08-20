@@ -4,12 +4,14 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Tile Drawer</title>
+    <script src="modestmaps.js" type="text/javascript" language="javascript1.5"></script>
     <style type="text/css" title="text/css">
     <!--
         body
         {
             font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
             font-size: 15px;
+            color: #4b4f4f;
         
         	background-color: white;
         	background-image: url(game-map.jpg);
@@ -18,6 +20,8 @@
         	background-attachment: scroll;
         }
         
+        h1, h2, a:link { color: #2a3867; }
+
         h1 { font-size: 27px; }
         h2 { font-size: 20px; }
         
@@ -35,6 +39,13 @@
             background-image: url(white-bg.png);
             border: 1px solid #cfeeed;
         }
+        
+        #map
+        {
+            width: 446px;
+            height: 446px;
+            border: 1px solid #4b4f4f;
+        }
     -->
     </style>
 </head>
@@ -50,6 +61,23 @@
         <p>
             <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can download the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. Tile Drawer is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
         </p>
+
+        <div id="map"></div>
+        <script type="text/javascript" language="javascript1.5">
+        <!--
+            
+            var tileURL = function(coord) {
+                var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
+                return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+            }
+        
+            var mm = com.modestmaps;
+            var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
+            map.setCenterZoom(new mm.Location(0, 0), 1);
+            map.draw();
+        
+        //-->
+        </script>
         <p>
             Background image by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
             <br>
