@@ -10,13 +10,21 @@
         {
             font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
             font-size: 15px;
-            line-height: 20px;
         
         	background-color: white;
         	background-image: url(game-map.jpg);
         	background-repeat: no-repeat;
         	background-position: center top;
         	background-attachment: scroll;
+        }
+        
+        h1 { font-size: 27px; }
+        h2 { font-size: 20px; }
+        
+        h1, h2, p
+        {
+            margin: 11px 0;
+            line-height: 1.333em;
         }
         
         #content
@@ -33,23 +41,14 @@
 <body>
 
     <div id="content">
-        <h1>hello world.</h1>
+        <h1>Tile Drawer</h1>
         <p>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
-            <br>
-            blah blah
+            Run your own OpenStreetMap server in the cloud with one-step configuration and zero administration. <i>Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
+        </p>
+
+        <h2>Why &amp; How</h2>
+        <p>
+            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can download the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. Tile Drawer is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
         </p>
         <p>
             Background image by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
