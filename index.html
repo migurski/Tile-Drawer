@@ -57,6 +57,7 @@
             white-space: pre;
             background-color: white;
             border: 1px solid #cfeeed;
+            overflow: hidden;
             padding: 16px;
         }
     -->
@@ -109,7 +110,7 @@
                 var userdata = document.getElementById('userdata');
                 
                 if(userdata)
-                    userdata.innerHTML = '{\n    "bbox": ['+west+', '+south+', '+east+', '+north+']\n}\n';
+                    userdata.innerHTML = '{\n    "source": null,\n    "style": null,\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "coast": "http://hypercube.telascience.org/~kleptog/processed_p.zip"\n}\n';
             }
             
             var tileURL = function(coord) {
