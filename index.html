@@ -9,16 +9,21 @@
     <!--
         body
         {
-            font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
-            font-size: 15px;
-            color: #4b4f4f;
-        
         	background-color: white;
         	background-image: url(game-map.jpg);
         	background-repeat: no-repeat;
         	background-position: center top;
-        	background-attachment: scroll;
+        	background-attachment: fixed;
         }
+        
+        body, textarea
+        {
+            font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
+            font-size: 15px;
+            color: #4b4f4f;
+        }
+        
+        img { border: none; }
         
         h1, h2, a:link { color: #2a3867; }
 
@@ -46,13 +51,21 @@
             height: 446px;
             border: 1px solid #4b4f4f;
         }
+        
+        #userdata
+        {
+            white-space: pre;
+            background-color: white;
+            border: 1px solid #cfeeed;
+            padding: 16px;
+        }
     -->
     </style>
 </head>
 <body>
 
     <div id="content">
-        <h1>Tile Drawer</h1>
+        <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
         <p>
             Run your own OpenStreetMap server in the cloud with one-step configuration and zero administration. <i>Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
         </p>
@@ -62,9 +75,42 @@
             <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can download the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. Tile Drawer is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
         </p>
 
-        <div id="map"></div>
+        <p id="map"></p>
+
+        <p>
+            This is the user data you’d provide to your Amazon EC2 instance:
+        </p>
+
+        <p id="userdata"></p>
+        
         <script type="text/javascript" language="javascript1.5">
         <!--
+        
+            function limitAndFix(value, lowest, highest)
+            {
+                return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
+            }
+            
+            function onMapChanged(map)
+            {
+                var buffer = 33; // extra space around the visible map
+                
+                var topleft = new mm.Point(-buffer, -buffer);
+                var bottomright = new mm.Point(map.dimensions.x + buffer, map.dimensions.y + buffer);
+
+                var northwest = map.pointLocation(topleft);
+                var southeast = map.pointLocation(bottomright);
+                
+                var north = limitAndFix(northwest.lat, -85, 85);
+                var south = limitAndFix(southeast.lat, -85, 85);
+                var east = limitAndFix(southeast.lon, -180, 180);
+                var west = limitAndFix(northwest.lon, -180, 180);
+
+                var userdata = document.getElementById('userdata');
+                
+                if(userdata)
+                    userdata.innerHTML = '{\n    "bbox": ['+west+', '+south+', '+east+', '+north+']\n}\n';
+            }
             
             var tileURL = function(coord) {
                 var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
@@ -73,13 +119,28 @@
         
             var mm = com.modestmaps;
             var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
+
+            map.addCallback('zoomed',    function(m, a) { return onMapChanged(m); });
+            map.addCallback('centered',  function(m, a) { return onMapChanged(m); });
+            map.addCallback('extentset', function(m, a) { return onMapChanged(m); });
+            map.addCallback('panned',    function(m, a) { return onMapChanged(m); });
+            
             map.setCenterZoom(new mm.Location(0, 0), 1);
             map.draw();
         
         //-->
         </script>
+        
+        <p style="text-align: center;">
+            <img src="drawer.png" alt="Tile Drawer" width="144" height="127">
+        </p>
+        
         <p>
-            Background image by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
+            Logo &amp; illustration by <a href="http://use-it.be/en/page/54/visit-use-it/">Nicolas Marichal, USE-IT</a>.
+        </p>
+        
+        <p>
+            Background by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
             <br>
             Used without permission.
         </p>
