@@ -9,18 +9,15 @@
     <!--
         body
         {
+            font-size: 15px;
+            font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
+            color: #4b4f4f;
+
         	background-color: white;
         	background-image: url(game-map.jpg);
         	background-repeat: no-repeat;
         	background-position: center top;
         	background-attachment: fixed;
-        }
-        
-        body, textarea
-        {
-            font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
-            font-size: 15px;
-            color: #4b4f4f;
         }
         
         img { border: none; }
@@ -30,7 +27,7 @@
         h1 { font-size: 27px; }
         h2 { font-size: 20px; }
         
-        h1, h2, p
+        h1, h2, p, .map-box
         {
             margin: 11px 0;
             line-height: 1.333em;
@@ -45,6 +42,28 @@
             border: 1px solid #cfeeed;
         }
         
+        .map-box { position: relative; }
+        
+        .map-box .controls
+        {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+        }
+        
+            .map-box .controls a
+            {
+                display: block;
+                float: left;
+                margin: 0 5px 0 0;
+                padding: 2px 5px;
+                border: 1px solid #cfeeed;
+                background-color: white;
+                text-decoration: none;
+                line-height: 11px;
+            }
+            
         #map
         {
             width: 446px;
@@ -54,6 +73,7 @@
         
         #userdata
         {
+            font-size: 12px;
             white-space: pre;
             background-color: white;
             border: 1px solid #cfeeed;
@@ -76,7 +96,16 @@
             <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can download the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. Tile Drawer is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
         </p>
 
-        <p id="map"></p>
+        <div class="map-box">
+            <div id="map"></div>
+            <div class="controls">
+                <a href="javascript:map.zoomIn()">+ Zoom In</a>
+                <a href="javascript:map.zoomOut()">– Zoom Out</a>
+                <a href="javascript:map.setCenterZoom(new mm.Location(0, 0), 1)">See All</a>
+                <br>
+                Drag the map to pan around.
+            </div>
+        </div>
 
         <p>
             This is the user data you’d provide to your Amazon EC2 instance:
