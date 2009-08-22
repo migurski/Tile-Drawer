@@ -110,13 +110,15 @@
             <p>
                 <input type="text" style="width: 440px;" value="..." onchange="onChanged()" name="url">
             </p>
+            <p>
+                Why Cascadenik? The small reason is that we prefer to write, modify, and read Cascadenik-formatted stylesheets. The big reason is that Cascadenik supports hyperlinks, and makes it possible for complete, working stylesheets to specify external dependencies such as linked styles or images.
+            </p>
         </form>
 
         <h3>Select A Location</h3>
         <p>
-            Pan and zoom the map to the area you’d like to render. A small Amazon EC2 instance (1 CPU, 512MB RAM) is sufficient to render a small state, region, or major metropolitan area.
+            Pan and zoom the map to the area you’d like to render.
         </p>
-
         <div class="map-box">
             <div id="map"></div>
             <div class="controls">
@@ -125,15 +127,21 @@
                 <a href="javascript:map.setCenterZoom(new mm.Location(0, 0), 1)">See All</a>
             </div>
         </div>
+        <p>
+            A small Amazon EC2 instance (1 CPU, 512MB RAM — there are two larger instance sizes) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure.
+        </p>
 
         <h3>Pick A Different Data Source?</h3>
         <form id="data" action="#" method="get" onsubmit="return false;">
             <p>
-                The default Planet file from <i>planet.openstreetmap.org</i> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
+                Enter the complete URL of an OpenStreetMap dump file, generally a <a href="http://en.wikipedia.org/wiki/Bzip2">bzipped</a> <i>*.osm</i> file.
             </p>
             <p>
                 <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="onChanged()" name="source">
                 <input type="hidden" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" name="coast">
+            </p>
+            <p>
+                The default Planet file from <i>planet.openstreetmap.org</i> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
             </p>
         </form>
 
