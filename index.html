@@ -103,18 +103,18 @@
         </p>
         
         <h3>Choose Your Style</h3>
-        <form>
+        <form name="style" action="#" method="get" onsubmit="return false;">
             <p>
-                
+                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
             </p>
             <p>
-                <input type="text" style="width: 440px;" value="..." onchange="alert(this)">
+                <input type="text" style="width: 440px;" value="..." onchange="onChanged()" name="url">
             </p>
         </form>
 
         <h3>Select A Location</h3>
         <p>
-            
+            Pan and zoom the map to the area you’d like to render. A small Amazon EC2 instance (1 CPU, 512MB RAM) is sufficient to render a small state, region, or major metropolitan area.
         </p>
 
         <div class="map-box">
@@ -123,28 +123,17 @@
                 <a href="javascript:map.zoomIn()">+ Zoom In</a>
                 <a href="javascript:map.zoomOut()">– Zoom Out</a>
                 <a href="javascript:map.setCenterZoom(new mm.Location(0, 0), 1)">See All</a>
-                <br>
-                Drag the map to pan around.
             </div>
         </div>
 
         <h3>Pick A Different Data Source?</h3>
-        <p>
-            This is optional.
-        </p>
-
-        <form>
+        <form id="data" action="#" method="get" onsubmit="return false;">
             <p>
-                
+                The default Planet file from <i>planet.openstreetmap.org</i> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
             </p>
             <p>
-                <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="alert(this)">
-            </p>
-            <p>
-                
-            </p>
-            <p>
-                <input type="text" style="width: 440px;" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" onchange="alert(this)">
+                <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="onChanged()" name="source">
+                <input type="hidden" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" name="coast">
             </p>
         </form>
 
@@ -163,7 +152,7 @@
                 return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
             }
             
-            function onMapChanged(map)
+            function onChanged()
             {
                 var buffer = 33; // extra space around the visible map
                 
@@ -178,13 +167,17 @@
                 var east = limitAndFix(southeast.lon, -180, 180);
                 var west = limitAndFix(northwest.lon, -180, 180);
 
+                var styleform = document.forms['style'];
+                var dataform = document.forms['data']
+                
                 var userdata = document.getElementById('userdata');
                 
                 if(userdata)
-                    userdata.innerHTML = '{\n    "source": null,\n    "style": null,\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "coast": "http://hypercube.telascience.org/~kleptog/processed_p.zip"\n}\n';
+                    userdata.innerHTML = '{\n    "style": "'+styleform.elements['url'].value+'",\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": "'+dataform.elements['source'].value+'",\n    "coast": "'+dataform.elements['coast'].value+'"\n}\n';
             }
             
             var tileURL = function(coord) {
+                return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
                 var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
                 return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
             }
@@ -192,10 +185,10 @@
             var mm = com.modestmaps;
             var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
 
-            map.addCallback('zoomed',    function(m, a) { return onMapChanged(m); });
-            map.addCallback('centered',  function(m, a) { return onMapChanged(m); });
-            map.addCallback('extentset', function(m, a) { return onMapChanged(m); });
-            map.addCallback('panned',    function(m, a) { return onMapChanged(m); });
+            map.addCallback('zoomed',    function(m, a) { return onChanged(); });
+            map.addCallback('centered',  function(m, a) { return onChanged(); });
+            map.addCallback('extentset', function(m, a) { return onChanged(); });
+            map.addCallback('panned',    function(m, a) { return onChanged(); });
             
             map.setCenterZoom(new mm.Location(0, 0), 1);
             map.draw();
