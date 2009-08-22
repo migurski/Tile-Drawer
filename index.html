@@ -22,12 +22,13 @@
         
         img { border: none; }
         
-        h1, h2, a:link { color: #2a3867; }
+        h1, h2, h3, a:link { color: #2a3867; }
 
         h1 { font-size: 27px; }
         h2 { font-size: 20px; }
+        h3 { font-size: 15px; }
         
-        h1, h2, p, .map-box
+        h1, h2, h3, p, .map-box
         {
             margin: 11px 0;
             line-height: 1.333em;
@@ -88,12 +89,32 @@
     <div id="content">
         <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
         <p>
-            Run your own OpenStreetMap server in the cloud with one-step configuration and zero administration. <i>Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
+            Run your own OpenStreetMap server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
         </p>
 
         <h2>Why &amp; How</h2>
         <p>
-            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can download the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. Tile Drawer is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
+            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can get the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. <span style="white-space: nowrap;">Tile Drawer</span> is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
+        </p>
+
+        <h2>Get Started</h2>
+        <p>
+            
+        </p>
+        
+        <h3>Choose Your Style</h3>
+        <form>
+            <p>
+                
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="..." onchange="alert(this)">
+            </p>
+        </form>
+
+        <h3>Select A Location</h3>
+        <p>
+            
         </p>
 
         <div class="map-box">
@@ -107,6 +128,27 @@
             </div>
         </div>
 
+        <h3>Pick A Different Data Source?</h3>
+        <p>
+            This is optional.
+        </p>
+
+        <form>
+            <p>
+                
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="alert(this)">
+            </p>
+            <p>
+                
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" onchange="alert(this)">
+            </p>
+        </form>
+
+        <h3>All Done</h3>
         <p>
             This is the user data you’d provide to your Amazon EC2 instance:
         </p>
