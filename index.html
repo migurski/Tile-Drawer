@@ -5,6 +5,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Tile Drawer</title>
     <script src="modestmaps.js" type="text/javascript" language="javascript1.5"></script>
+    <script src="json2.js" type="text/javascript" language="javascript1.5"></script>
     <style type="text/css" title="text/css">
     <!--
         body
@@ -180,8 +181,8 @@
                 
                 var userdata = document.getElementById('userdata');
                 
-                if(userdata)
-                    userdata.innerHTML = '{\n    "style": "'+styleform.elements['url'].value+'",\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": "'+dataform.elements['source'].value+'",\n    "coast": "'+dataform.elements['coast'].value+'"\n}\n';
+                if(styleform && dataform && userdata)
+                    userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
             }
             
             var tileURL = function(coord) {
