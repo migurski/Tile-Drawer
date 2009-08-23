@@ -6,6 +6,48 @@
 	<title>Tile Drawer</title>
     <script src="modestmaps.js" type="text/javascript" language="javascript1.5"></script>
     <script src="json2.js" type="text/javascript" language="javascript1.5"></script>
+    <script type="text/javascript" language="javascript1.5">
+    <!--
+    
+        var mm = com.modestmaps;
+
+        function limitAndFix(value, lowest, highest)
+        {
+            return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
+        }
+        
+        function onChanged()
+        {
+            var buffer = 33; // extra space around the visible map
+            
+            var topleft = new mm.Point(-buffer, -buffer);
+            var bottomright = new mm.Point(map.dimensions.x + buffer, map.dimensions.y + buffer);
+
+            var northwest = map.pointLocation(topleft);
+            var southeast = map.pointLocation(bottomright);
+            
+            var north = limitAndFix(northwest.lat, -85, 85);
+            var south = limitAndFix(southeast.lat, -85, 85);
+            var east = limitAndFix(southeast.lon, -180, 180);
+            var west = limitAndFix(northwest.lon, -180, 180);
+
+            var styleform = document.forms['style'];
+            var dataform = document.forms['data']
+            
+            var userdata = document.getElementById('userdata');
+            
+            if(styleform && dataform && userdata)
+                userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
+        }
+        
+        var tileURL = function(coord) {
+            return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+            var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
+            return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+        }
+    
+    //-->
+    </script>
     <style type="text/css" title="text/css">
     <!--
         body
@@ -161,42 +203,6 @@
         <script type="text/javascript" language="javascript1.5">
         <!--
         
-            function limitAndFix(value, lowest, highest)
-            {
-                return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
-            }
-            
-            function onChanged()
-            {
-                var buffer = 33; // extra space around the visible map
-                
-                var topleft = new mm.Point(-buffer, -buffer);
-                var bottomright = new mm.Point(map.dimensions.x + buffer, map.dimensions.y + buffer);
-
-                var northwest = map.pointLocation(topleft);
-                var southeast = map.pointLocation(bottomright);
-                
-                var north = limitAndFix(northwest.lat, -85, 85);
-                var south = limitAndFix(southeast.lat, -85, 85);
-                var east = limitAndFix(southeast.lon, -180, 180);
-                var west = limitAndFix(northwest.lon, -180, 180);
-
-                var styleform = document.forms['style'];
-                var dataform = document.forms['data']
-                
-                var userdata = document.getElementById('userdata');
-                
-                if(styleform && dataform && userdata)
-                    userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
-            }
-            
-            var tileURL = function(coord) {
-                return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
-                var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
-                return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
-            }
-        
-            var mm = com.modestmaps;
             var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
 
             map.addCallback('zoomed',    function(m, a) { return onChanged(); });
