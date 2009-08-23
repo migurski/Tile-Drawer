@@ -22,6 +22,7 @@
         }
         
         img { border: none; }
+        img.screen { border: 1px solid #4b4f4f; }
         
         h1, h2, h3, a:link { color: #2a3867; }
 
@@ -103,20 +104,7 @@
             
         </p>
         
-        <h3>1. Choose Your Style</h3>
-        <form name="style" action="#" method="get" onsubmit="return false;">
-            <p>
-                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
-            </p>
-            <p>
-                <input type="text" style="width: 440px;" value="..." onchange="onChanged()" name="url">
-            </p>
-            <p>
-                Why Cascadenik? The small reason is that we prefer to write, modify, and read Cascadenik-formatted stylesheets. The big reason is that Cascadenik supports hyperlinks, and makes it possible for complete, working stylesheets to specify external dependencies such as linked styles or images.
-            </p>
-        </form>
-
-        <h3>2. Select A Location</h3>
+        <h3>1. Select A Location</h3>
         <p>
             Pan and zoom the map to the area you’d like to render.
         </p>
@@ -132,7 +120,20 @@
             A small Amazon EC2 instance (1 CPU, 512MB RAM — there are two larger instance sizes) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure.
         </p>
 
-        <h3>3. Pick A Different Data Source?</h3>
+        <h3>2. Choose Your Style</h3>
+        <form name="style" action="#" method="get" onsubmit="return false;">
+            <p>
+                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="..." onchange="onChanged()" name="url">
+            </p>
+            <p>
+                Why Cascadenik? The small reason is that we prefer to write, modify, and read Cascadenik-formatted stylesheets. The big reason is that Cascadenik supports hyperlinks, and makes it possible for complete, working stylesheets to specify external dependencies such as linked styles or images.
+            </p>
+        </form>
+
+        <h3>3. Pick A Data Source</h3>
         <form id="data" action="#" method="get" onsubmit="return false;">
             <p>
                 Enter the complete URL of an OpenStreetMap dump file, generally a <a href="http://en.wikipedia.org/wiki/Bzip2">bzipped</a> <i>*.osm</i> file.
@@ -148,7 +149,7 @@
 
         <h3>4. Start Your Instance</h3>
         <p>
-            This is the user data you’d provide to your Amazon EC2 instance:
+            This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
         </p>
 
         <p id="userdata"></p>
@@ -204,6 +205,16 @@
         
         //-->
         </script>
+
+        <p>
+            The data above must be <strong>copied exactly</strong> to work. If you’re using the <a href="http://aws.amazon.com/console/">AWS Management Console</a>, you can do this under the <i>Advanced Options</i> in the instance launch wizard:
+        </p>
+        <p>
+            <a href="userdata-large.jpg" target="_blank"><img class="screen" src="userdata-small.jpg" alt="" width="446" height="298" border="1"></a>
+        </p>
+        <p>
+            Don’t check “base64 encoded”.
+        </p>
         
         <p style="text-align: center;">
             <img src="drawer.png" alt="Tile Drawer" width="144" height="127">
