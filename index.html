@@ -67,7 +67,7 @@
         
         <h2>Get Started</h2>
         <p>
-            
+            Follow the steps below to select a coverage location, choose a map rendering style, enter a data source, and starting your Tile Drawer instance.
         </p>
         
         <h3>1. Select A Location</h3>
@@ -115,7 +115,10 @@
 
         <h3>4. Start Your Instance</h3>
         <p>
-            Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>. This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
+            Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>.
+        </p>
+        <p>
+            This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
         </p>
 
         <p id="userdata"></p>
@@ -149,6 +152,9 @@
         <h3>5. Sit Tight</h3>
         <p>
             Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{instance address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{instance address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>
+        </p>
+        <p>
+            That’s it, you’re done. If you’re happy with how the map looks, then you don’t need to do anything more. As you view more of the map, the tiles will renders slowly at first, and then more quickly as they are cached.
         </p>
         
         <p style="text-align: center;">
