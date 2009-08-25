@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- To get running switch the entitites below to fit your environment, and then search and replace the table names osm_polygon, osm_line, and osm_point to fit your osm database table names which default to osm_point, etc. -->
+
+<!DOCTYPE Map[
+
+    <!-- coastline settings -->
+    <!ENTITY coastlines_srs "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
+    
+    <!-- osm2pgsql defaults to importing OSM data in mercator projection (+proj=merc) -->
+    <!-- this is also the projection the map should be in for serving tiles in the standard way -->
+    <!ENTITY map_srs "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
+    
+    <!-- if you imported data using osm2pgsql in lon/lat then uncomment this next line and comment out the mercator line -->
+    <!--<!ENTITY osm_srs "+proj=latlong +ellps=WGS84 +datum=WGS84 +no_defs">-->
+    <!ENTITY osm_srs "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
+    
+    <!-- if estimate_extent is false then we manually set the bounds for our data -->
+    <!ENTITY estimate_extent "false">
+    <!-- extent in spherical mercator of OSM data (+proj=merc...)-->
+    <!ENTITY extent "-20037508,-19929239,20037508,19929239">
+    <!-- Full global extent in spherical mercator (+proj=merc...)-->
+    <!-- <!ENTITY extent "-20037508.34,-20037508.34,20037508.34,20037508.34">-->
+    <!-- global extent in lon lat (uncomment if your data was imported in lon/lat-->
+    <!--<!ENTITY extent "-180,-89.9,180,89.9">-->
+
+    <!-- database settings -->
+    <!ENTITY host "localhost">
+    <!ENTITY port "5432">
+    <!ENTITY user "osm">
+    <!ENTITY password "">
+    <!ENTITY dbname "osm">
+]>
+<Map srs="&map_srs;">
+  <Stylesheet>
+    Map { map-bgcolor: #9cf; } 
+    #land { polygon-fill: #efe; }
+    #polygons[leisure=park] { polygon-fill: #6f9; }
+
+    /*
+    #iso
+    {
+        line-width: 1;
+        line-color: #000;
+        line-opacity: .15;
+    }
+    */
+
+    #lines[highway=motorway],
+    #lines[highway=motorway_link]
+    {
+    	line-width: 4;
+	line-color: #000;
+    }
+
+    #lines[highway=primary],
+    #lines[highway=secondary],
+    #lines[highway=tertiary]
+    {
+    	line-width: 3;
+	line-color: #666;
+    }
+
+    #lines[highway=residential],
+    #lines[highway=unclassified],
+    #lines[highway=service]
+    {
+    	line-width: 1;
+	line-color: #666;
+    }
+
+    #lines[highway=primary] name,
+    #lines[highway=secondary] name,
+    #lines[highway=tertiary] name,
+    #lines[highway=residential] name,
+    #lines[highway=unclassified] name,
+    #lines[highway=service] name
+    {
+    	text-face-name: 'DejaVu Sans Book';
+	text-placement: line;
+	text-max-char-angle-delta: 20;
+	text-avoid-edges: true;
+	text-min-distance: 100;
+	text-fill: #000;
+	text-size: 10;
+	text-dy: 6;
+	text-halo-radius: 1;
+	text-halo-fill: #efe;
+    }
+
+    #lines[highway=primary] name,
+    #lines[highway=secondary] name,
+    #lines[highway=tertiary] name
+    {
+    	text-face-name: 'DejaVu Sans Bold';
+	text-size: 12;
+    }
+
+    #lines[highway=motorway][is_bridge=yes],
+    #lines[highway=motorway_link][is_bridge=yes],
+    #lines[highway=primary][is_bridge=yes],
+    #lines[highway=secondary][is_bridge=yes],
+    #lines[highway=tertiary][is_bridge=yes],
+    #lines[highway=residential][is_bridge=yes],
+    #lines[highway=unclassified][is_bridge=yes],
+    #lines[highway=service][is_bridge=yes]
+    {
+    	outline-width: 1;
+	outline-color: #efe;
+    }
+  </Stylesheet>
+
+  <Layer id="land" srs="&coastlines_srs;">
+    <Datasource>
+      <Parameter name="type">postgis</Parameter>
+      <Parameter name="host">&host;</Parameter>
+      <Parameter name="port">&port;</Parameter>
+      <Parameter name="user">&user;</Parameter>
+      <Parameter name="password">&password;</Parameter>
+      <Parameter name="dbname">&dbname;</Parameter>
+      <Parameter name="estimate_extent">&estimate_extent;</Parameter>
+      <Parameter name="extent">&extent;</Parameter>
+
+      <Parameter name="table">coastline</Parameter>
+    </Datasource>
+  </Layer>
+  <Layer id="polygons" srs="&osm_srs;">
+    <StyleName>parks</StyleName>
+    <Datasource>
+      <Parameter name="type">postgis</Parameter>
+      <Parameter name="host">&host;</Parameter>
+      <Parameter name="port">&port;</Parameter>
+      <Parameter name="user">&user;</Parameter>
+      <Parameter name="password">&password;</Parameter>
+      <Parameter name="dbname">&dbname;</Parameter>
+      <Parameter name="estimate_extent">&estimate_extent;</Parameter>
+      <Parameter name="extent">&extent;</Parameter>
+
+      <Parameter name="table">osm_polygon</Parameter>
+    </Datasource>
+  </Layer>
+  <Layer id="lines" srs="&osm_srs;">
+    <Datasource>
+      <Parameter name="type">postgis</Parameter>
+      <Parameter name="host">&host;</Parameter>
+      <Parameter name="port">&port;</Parameter>
+      <Parameter name="user">&user;</Parameter>
+      <Parameter name="password">&password;</Parameter>
+      <Parameter name="dbname">&dbname;</Parameter>
+      <Parameter name="estimate_extent">&estimate_extent;</Parameter>
+      <Parameter name="extent">&extent;</Parameter>
+
+      <Parameter name="table"><![CDATA[
+                (SELECT *,
+                        COALESCE(z_order, 0) AS coalesced_z_order,
+                        (CASE WHEN highway IN ('motorway') THEN 0
+                              WHEN highway IN ('motorway_link') THEN 1
+                              WHEN highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway') THEN 2
+                              WHEN railway IN ('rail', 'spur', 'subway', 'light_rail', 'tram', 'abandoned', 'disused', 'monorail') THEN 3
+                              WHEN highway IN ('trunk', 'trunk_link', 'primary', 'primary_link') THEN 4
+                              WHEN highway = 'secondary' THEN 5
+                              WHEN highway = 'tertiary' THEN 6
+                              ELSE 9 END) AS priority,
+                        (CASE WHEN tunnel IN ('yes', 'true') THEN 'yes'
+                              ELSE 'no' END) AS is_tunnel,
+                        (CASE WHEN bridge IN ('yes', 'true') THEN 'yes'
+                              ELSE 'no' END) AS is_bridge
+
+                 FROM osm_line
+
+                 WHERE railway IN ('rail', 'spur', 'subway', 'light_rail', 'tram', 'abandoned', 'disused', 'monorail')
+                    OR highway IN ('secondary', 'trunk', 'trunk_link', 'primary', 'primary_link', 'motorway', 'motorway_link')
+                    OR highway IN ('residential', 'unclassified', 'service', 'minor', 'road', 'tertiary')
+                    OR highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway')
+
+                 ORDER BY coalesced_z_order ASC, priority DESC)
+                 
+                 AS lines]]></Parameter>
+    </Datasource>
+  </Layer>
+</Map>

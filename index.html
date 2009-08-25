@@ -92,10 +92,10 @@
                 Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
             </p>
             <p>
-                <input type="text" style="width: 440px;" value="http://tiledrawer.com/osm-style/style.mml" onchange="onChanged()" name="url">
+                <input type="text" style="width: 440px;" value="http://tiledrawer.com/mapscratch.mml" onchange="onChanged()" name="url">
             </p>
             <p>
-                Why Cascadenik? The small reason is that we prefer to write, modify, and read Cascadenik-formatted stylesheets. The big reason is that Cascadenik supports hyperlinks, and makes it possible for complete, working stylesheets to specify external dependencies such as linked styles or images.
+                Check the <a href="gallery.html">Map Styles page</a> for a few pre-made styles that you can use now.
             </p>
         </form>
 
@@ -115,7 +115,7 @@
 
         <h3>4. Start Your Instance</h3>
         <p>
-            This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
+            Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>. This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
         </p>
 
         <p id="userdata"></p>
@@ -145,15 +145,22 @@
         <p>
             Don’t check “base64 encoded”.
         </p>
+
+        <h3>5. Sit Tight</h3>
+        <p>
+            Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{instance address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{instance address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>
+        </p>
         
         <p style="text-align: center;">
             <img src="chest.png" alt="Tile Drawer" width="135" height="149">
         </p>
         
         <p>
+            Contact: <a href="mailto:info@tiledrawer.com">info@tiledrawer.com</a>
+        </p>
+        <p>
             Logo &amp; illustration by <a href="http://use-it.be/en/page/54/visit-use-it/">Nicolas Marichal, USE-IT</a>.
         </p>
-        
         <p>
             Background by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
             <br>

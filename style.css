@@ -11,6 +11,8 @@ body
     background-attachment: fixed;
 }
 
+code { font-size: 12px; }
+
 img { border: none; }
 img.screen { border: 1px solid #4b4f4f; }
 
