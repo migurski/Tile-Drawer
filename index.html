@@ -53,7 +53,13 @@
     <div id="content">
         <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
         <p>
-            Run your own OpenStreetMap server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
+            Tile Drawer makes designing and hosting custom maps simple and straightforward. The project lets anyone run their own <a href="http://openstreetmap.org">OpenStreetMap</a> server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
+        </p>
+        <p>
+            You can use the rendered map tiles in a number of ways: with other GIS data in <a href="http://openlayers.org/">OpenLayers</a>, in a Flash application built on <a href="http://modestmaps.com/">Modest Maps</a>, or layered into a Google Map as a <a href="http://code.google.com/apis/maps/documentation/overlays.html#CustomMapTiles">custom map tile overlay</a>.
+        </p>
+        <p>
+            This site is <i>really new</i>, read more at the <a href="http://mike.teczno.com/notes/tile-drawer.html">announcement blog post</a>.
         </p>
 
         <h2>Why &amp; How</h2>
@@ -83,7 +89,7 @@
             </div>
         </div>
         <p>
-            A small Amazon EC2 instance (1 CPU, 512MB RAM — there are two larger instance sizes) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure.
+            A small Amazon EC2 instance (1 CPU, 512MB RAM) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure. Start small!
         </p>
 
         <h3>2. Choose Your Style</h3>
@@ -95,7 +101,7 @@
                 <input type="text" style="width: 440px;" value="http://tiledrawer.com/mapscratch.mml" onchange="onChanged()" name="url">
             </p>
             <p>
-                Check the <a href="gallery.html">Map Styles page</a> for a few pre-made styles that you can use now.
+                Check the <a href="gallery.html">Map Styles page</a> for a few pre-made styles that you can use now, or as a basis for writing your own. The default one above is “<a href="gallery.html#scratch">Scratch</a>”.
             </p>
         </form>
 
@@ -109,7 +115,7 @@
                 <input type="hidden" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" name="coast">
             </p>
             <p>
-                The default Planet file from <i>planet.openstreetmap.org</i> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
+                The default Planet file from <a href="http://planet.openstreetmap.org">planet.openstreetmap.org</a> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
             </p>
         </form>
 
@@ -146,7 +152,7 @@
             <a href="userdata-large.jpg" target="_blank"><img class="screen" src="userdata-small.jpg" alt="" width="446" height="298" border="1"></a>
         </p>
         <p>
-            Don’t check “base64 encoded”.
+            (Don’t check “base64 encoded”)
         </p>
 
         <h3>5. Sit Tight</h3>
