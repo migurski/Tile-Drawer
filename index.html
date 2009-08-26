@@ -146,7 +146,7 @@
         </script>
 
         <p>
-            The data above must be <strong>copied exactly</strong> to work. If you’re using the <a href="http://aws.amazon.com/console/">AWS Management Console</a>, you can do this under the <i>Advanced Options</i> in the instance launch wizard:
+            The data above must be <strong>copied exactly</strong> to work, including the curly braces (it’s run through a <a href="http://www.json.org/">JSON parser</a>). If you’re using the <a href="http://aws.amazon.com/console/">AWS Management Console</a>, you can do this under the <i>Advanced Options</i> in the instance launch wizard:
         </p>
         <p>
             <a href="userdata-large.jpg" target="_blank"><img class="screen" src="userdata-small.jpg" alt="" width="446" height="298" border="1"></a>
@@ -157,10 +157,10 @@
 
         <h3>5. Sit Tight</h3>
         <p>
-            Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{instance address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{instance address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>
+            Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>, along with an interactive slippy map at <code style="white-space: nowrap;">http://{address}/preview.php</code>.
         </p>
         <p>
-            That’s it, you’re done. If you’re happy with how the map looks, then you don’t need to do anything more. As you view more of the map, the tiles will renders slowly at first, and then more quickly as they are cached.
+            That’s it, you’re done. If you’re happy with how the map looks, then you don’t need to do anything more. As you view more of the map, the tiles will render slowly at first, and then more quickly as they are cached.
         </p>
         
         <p style="text-align: center;">
