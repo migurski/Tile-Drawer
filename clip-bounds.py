@@ -4,6 +4,7 @@ from urlparse import urlparse, urljoin
 from StringIO import StringIO
 from tarfile import TarFile
 from gzip import GzipFile
+from csv import DictReader
 
 from shapely.geometry import MultiPolygon
 from psycopg2 import connect
@@ -12,12 +13,42 @@ if __name__ != '__main__':
     # don't import me, I'm expensive
     exit()
 
-url = 'http://download.geofabrik.de/clipbounds/clipbounds.tgz'
-base_href = 'http://download.geofabrik.de/osm/'
+def size_and_date(href):
+    """
+    """
+    s, host, path, p, q, f = urlparse(href)
+    
+    conn = HTTPConnection(host, 80)
+    conn.request('HEAD', path)
+    resp = conn.getresponse()
+    
+    content_length = resp.getheader('content-length')
+    last_modified = resp.getheader('last-modified')
+    
+    return content_length, last_modified
 
-archive = StringIO(urlopen(url).read())
-archive = GzipFile(fileobj=archive)
-archive = TarFile(fileobj=archive)
+metro_url = 'http://metro.teczno.com/cities.txt'
+metro_pattern = 'http://osm-metro-extracts.s3.amazonaws.com/%s.osm.pbf'
+
+metro_list = StringIO(urlopen(metro_url).read())
+metro_list = DictReader(metro_list, dialect='excel-tab')
+
+for city in metro_list:
+    
+    extract_href = metro_pattern % city['slug']
+    
+    print extract_href
+    
+    content_length, last_modified = size_and_date(extract_href)
+
+exit(0)
+
+gf_url = 'http://download.geofabrik.de/clipbounds/clipbounds.tgz'
+gf_base_href = 'http://download.geofabrik.de/osm/'
+
+gf_archive = StringIO(urlopen(gf_url).read())
+gf_archive = GzipFile(fileobj=gf_archive)
+gf_archive = TarFile(fileobj=gf_archive)
 
 def parse_poly(lines):
     """ Parse an Osmosis polygon filter file.
@@ -69,25 +100,18 @@ db = connect(database='tiledrawer', user='tiledrawer').cursor()
 db.execute('BEGIN')
 db.execute('DELETE FROM extracts')
 
-for member in archive.getmembers():
+for member in gf_archive.getmembers():
     if not member.name.endswith('.poly'):
         continue
     
     extract_path = member.name[:-5] + '.osm.pbf'
-    extract_href = urljoin(base_href, extract_path)
+    extract_href = urljoin(gf_base_href, extract_path)
     
     print extract_href
     
-    s, host, path, p, q, f = urlparse(extract_href)
+    content_length, last_modified = size_and_date(extract_href)
     
-    conn = HTTPConnection(host, 80)
-    conn.request('HEAD', path)
-    resp = conn.getresponse()
-    
-    content_length = resp.getheader('content-length')
-    last_modified = resp.getheader('last-modified')
-    
-    lines = list(archive.extractfile(member))
+    lines = list(gf_archive.extractfile(member))
     shape = parse_poly(lines)
     
     db.execute("""INSERT INTO extracts (href, size, date, geom)
