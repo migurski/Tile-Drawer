@@ -6,15 +6,11 @@ from tarfile import TarFile
 from gzip import GzipFile
 from csv import DictReader
 
-from shapely.geometry import MultiPolygon
+from shapely.geometry import MultiPolygon, Polygon
 from psycopg2 import connect
 
-if __name__ != '__main__':
-    # don't import me, I'm expensive
-    exit()
-
 def size_and_date(href):
-    """
+    """ Get Content-Length and Last-Modified for a URL.
     """
     s, host, path, p, q, f = urlparse(href)
     
@@ -22,33 +18,13 @@ def size_and_date(href):
     conn.request('HEAD', path)
     resp = conn.getresponse()
     
+    if resp.status != 200:
+        raise IOError('not found')
+    
     content_length = resp.getheader('content-length')
     last_modified = resp.getheader('last-modified')
     
     return content_length, last_modified
-
-metro_url = 'http://metro.teczno.com/cities.txt'
-metro_pattern = 'http://osm-metro-extracts.s3.amazonaws.com/%s.osm.pbf'
-
-metro_list = StringIO(urlopen(metro_url).read())
-metro_list = DictReader(metro_list, dialect='excel-tab')
-
-for city in metro_list:
-    
-    extract_href = metro_pattern % city['slug']
-    
-    print extract_href
-    
-    content_length, last_modified = size_and_date(extract_href)
-
-exit(0)
-
-gf_url = 'http://download.geofabrik.de/clipbounds/clipbounds.tgz'
-gf_base_href = 'http://download.geofabrik.de/osm/'
-
-gf_archive = StringIO(urlopen(gf_url).read())
-gf_archive = GzipFile(fileobj=gf_archive)
-gf_archive = TarFile(fileobj=gf_archive)
 
 def parse_poly(lines):
     """ Parse an Osmosis polygon filter file.
@@ -95,10 +71,44 @@ def parse_poly(lines):
     
     return MultiPolygon(coords)
 
-db = connect(database='tiledrawer', user='tiledrawer').cursor()
+metro_url = 'http://metro.teczno.com/cities.txt'
+metro_pattern = 'http://osm-metro-extracts.s3.amazonaws.com/%s.osm.pbf'
 
-db.execute('BEGIN')
-db.execute('DELETE FROM extracts')
+gf_url = 'http://download.geofabrik.de/clipbounds/clipbounds.tgz'
+gf_base_href = 'http://download.geofabrik.de/osm/'
+
+if __name__ != '__main__':
+    # don't import me, I'm expensive
+    exit()
+
+
+
+extracts = []
+
+metro_list = StringIO(urlopen(metro_url).read())
+metro_list = DictReader(metro_list, dialect='excel-tab')
+
+for city in metro_list:
+    extract_href = metro_pattern % city['slug']
+    
+    try:
+        content_length, last_modified = size_and_date(extract_href)
+        print extract_href
+
+    except IOError:
+        print 'Failed', extract_href
+        continue
+    
+    y1, x1, y2, x2 = [float(city[key]) for key in ('top', 'left', 'bottom', 'right')]
+    shape = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
+    
+    extracts.append((extract_href, content_length, last_modified, shape))
+
+
+
+gf_archive = StringIO(urlopen(gf_url).read())
+gf_archive = GzipFile(fileobj=gf_archive)
+gf_archive = TarFile(fileobj=gf_archive)
 
 for member in gf_archive.getmembers():
     if not member.name.endswith('.poly'):
@@ -107,15 +117,29 @@ for member in gf_archive.getmembers():
     extract_path = member.name[:-5] + '.osm.pbf'
     extract_href = urljoin(gf_base_href, extract_path)
     
-    print extract_href
-    
-    content_length, last_modified = size_and_date(extract_href)
+    try:
+        content_length, last_modified = size_and_date(extract_href)
+        print extract_href
+
+    except IOError:
+        print 'Failed', extract_href
+        continue
     
     lines = list(gf_archive.extractfile(member))
     shape = parse_poly(lines)
     
+    extracts.append((extract_href, content_length, last_modified, shape))
+
+
+
+db = connect(database='tiledrawer', user='tiledrawer').cursor()
+
+db.execute('BEGIN')
+db.execute('DELETE FROM extracts')
+
+for (href, size, date, shape) in extracts:
     db.execute("""INSERT INTO extracts (href, size, date, geom)
-                  VALUES (%s, %s, %s, SetSRID(GeomFromText(%s), 4326))""",
-               (extract_href, content_length, last_modified, str(shape)))
+                  VALUES (%s, %s, %s, SetSRID(Multi(GeomFromText(%s)), 4326))""",
+               (href, size, date, str(shape)))
 
 db.execute('COMMIT')
