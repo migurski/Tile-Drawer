@@ -12,19 +12,24 @@ from psycopg2 import connect
 def size_and_date(href):
     """ Get Content-Length and Last-Modified for a URL.
     """
-    s, host, path, p, q, f = urlparse(href)
-    
-    conn = HTTPConnection(host, 80)
-    conn.request('HEAD', path)
-    resp = conn.getresponse()
-    
-    if resp.status != 200:
-        raise IOError('not found')
-    
-    content_length = resp.getheader('content-length')
-    last_modified = resp.getheader('last-modified')
-    
-    return content_length, last_modified
+    for attempt in range(10):
+        s, host, path, p, q, f = urlparse(href)
+        
+        conn = HTTPConnection(host, 80)
+        conn.request('HEAD', path)
+        resp = conn.getresponse()
+        
+        if resp.status in range(300, 399):
+            href = urljoin(href, resp.getheader('location'))
+            continue
+        
+        if resp.status != 200:
+            raise IOError('not found')
+        
+        content_length = resp.getheader('content-length')
+        last_modified = resp.getheader('last-modified')
+        
+        return content_length, last_modified
 
 def parse_poly(lines):
     """ Parse an Osmosis polygon filter file.
@@ -80,6 +85,22 @@ gf_base_href = 'http://download.geofabrik.de/osm/'
 if __name__ == '__main__':
 
     extracts = []
+    
+    extract_href = 'http://planet.openstreetmap.org/planet-latest.osm.bz2'
+    
+    try:
+        content_length, last_modified = size_and_date(extract_href)
+        print extract_href
+
+    except IOError:
+        print 'Failed', extract_href
+    
+    else:
+        y1, x1, y2, x2 = -180, -90, 180, 90
+        shape = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
+        extracts.append((extract_href, content_length, last_modified, shape))
+    
+    
     
     metro_list = StringIO(urlopen(metro_url).read())
     metro_list = DictReader(metro_list, dialect='excel-tab')
