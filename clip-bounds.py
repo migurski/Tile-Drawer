@@ -1,5 +1,6 @@
 from urllib import urlopen
-from urlparse import urljoin
+from httplib import HTTPConnection
+from urlparse import urlparse, urljoin
 from StringIO import StringIO
 from tarfile import TarFile
 from gzip import GzipFile
@@ -66,6 +67,15 @@ for member in archive.getmembers():
     extract_href = urljoin(base_href, extract_path)
     
     print extract_href
+    
+    s, host, path, p, q, f = urlparse(extract_href)
+    
+    conn = HTTPConnection(host, 80)
+    conn.request('HEAD', path)
+    resp = conn.getresponse()
+    
+    content_length = resp.getheader('content-length')
+    last_modified = resp.getheader('last-modified')
     
     lines = list(archive.extractfile(member))
     shape = parse_poly(lines)
