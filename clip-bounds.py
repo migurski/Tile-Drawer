@@ -6,6 +6,11 @@ from tarfile import TarFile
 from gzip import GzipFile
 
 from shapely.geometry import MultiPolygon
+from psycopg2 import connect
+
+if __name__ != '__main__':
+    # don't import me, I'm expensive
+    exit()
 
 url = 'http://download.geofabrik.de/clipbounds/clipbounds.tgz'
 base_href = 'http://download.geofabrik.de/osm/'
@@ -59,6 +64,11 @@ def parse_poly(lines):
     
     return MultiPolygon(coords)
 
+db = connect(database='tiledrawer', user='tiledrawer').cursor()
+
+db.execute('BEGIN')
+db.execute('DELETE FROM extracts')
+
 for member in archive.getmembers():
     if not member.name.endswith('.poly'):
         continue
@@ -79,3 +89,9 @@ for member in archive.getmembers():
     
     lines = list(archive.extractfile(member))
     shape = parse_poly(lines)
+    
+    db.execute("""INSERT INTO extracts (href, size, date, geom)
+                  VALUES (%s, %s, %s, SetSRID(GeomFromText(%s), 4326))""",
+               (extract_href, content_length, last_modified, str(shape)))
+
+db.execute('COMMIT')
