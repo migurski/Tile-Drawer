@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Tile Drawer</title>
+    <script src="modestmaps.js" type="text/javascript" language="javascript1.5"></script>
+    <script src="json2.js" type="text/javascript" language="javascript1.5"></script>
+    <script type="text/javascript" language="javascript1.5">
+    <!--
+        var mm = com.modestmaps;
+
+        function limitAndFix(value, lowest, highest)
+        {
+            return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
+        }
+        
+        function onChanged()
+        {
+            var buffer = 33; // extra space around the visible map
+            
+            var topleft = new mm.Point(-buffer, -buffer);
+            var bottomright = new mm.Point(map.dimensions.x + buffer, map.dimensions.y + buffer);
+
+            var northwest = map.pointLocation(topleft);
+            var southeast = map.pointLocation(bottomright);
+            
+            var north = limitAndFix(northwest.lat, -85, 85);
+            var south = limitAndFix(southeast.lat, -85, 85);
+            var east = limitAndFix(southeast.lon, -180, 180);
+            var west = limitAndFix(northwest.lon, -180, 180);
+
+            var styleform = document.forms['style'];
+            var dataform = document.forms['data']
+            
+            var userdata = document.getElementById('userdata');
+            
+            if(styleform && dataform && userdata)
+                userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
+        }
+        
+        var tileURL = function(coord) {
+            return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+            var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
+            return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
+        }
+    //-->
+    </script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+
+    <div id="content">
+        <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
+        <p>
+            Tile Drawer makes designing and hosting custom maps simple and straightforward. The project lets anyone run their own <a href="http://openstreetmap.org">OpenStreetMap</a> server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
+        </p>
+        <p>
+            You can use the rendered map tiles in a number of ways: with other GIS data in <a href="http://openlayers.org/">OpenLayers</a>, in a Flash application built on <a href="http://modestmaps.com/">Modest Maps</a>, or layered into a Google Map as a <a href="http://code.google.com/apis/maps/documentation/overlays.html#CustomMapTiles">custom map tile overlay</a>.
+        </p>
+        <p>
+            This site is <i>really new</i>, read more at the <a href="http://mike.teczno.com/notes/tile-drawer.html">announcement blog post</a>.
+        </p>
+
+        <h2>Why &amp; How</h2>
+        <p>
+            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can get the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. <span style="white-space: nowrap;">Tile Drawer</span> is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
+        </p>
+        
+        <p style="text-align: center;">
+            <img src="drawer.png" alt="Tile Drawer" width="144" height="127">
+        </p>
+        
+        <h2>Get Started</h2>
+        <p>
+            Follow the steps below to select a coverage location, choose a map rendering style, enter a data source, and starting your Tile Drawer instance.
+        </p>
+        
+        <h3>1. Select A Location</h3>
+        <p>
+            Pan and zoom the map to the area you’d like to render.
+        </p>
+        <div class="map-box">
+            <div id="map"></div>
+            <div class="controls">
+                <a href="javascript:map.zoomIn()">+ Zoom In</a>
+                <a href="javascript:map.zoomOut()">– Zoom Out</a>
+                <a href="javascript:map.setCenterZoom(new mm.Location(0, 0), 1)">See All</a>
+            </div>
+        </div>
+        <p>
+            A small Amazon EC2 instance (1 CPU, 512MB RAM) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure. Start small!
+        </p>
+
+        <h3>2. Choose Your Style</h3>
+        <form name="style" action="#" method="get" onsubmit="return false;">
+            <p>
+                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="http://tiledrawer.com/mapscratch.mml" onchange="onChanged()" name="url">
+            </p>
+            <p>
+                Check the <a href="gallery.html">Map Styles page</a> for a few pre-made styles that you can use now, or as a basis for writing your own. The default one above is “<a href="gallery.html#scratch">Scratch</a>”.
+            </p>
+        </form>
+
+        <h3>3. Pick A Data Source</h3>
+        <form id="data" action="#" method="get" onsubmit="return false;">
+            <p>
+                Enter the complete URL of an OpenStreetMap dump file, generally a <a href="http://en.wikipedia.org/wiki/Bzip2">bzipped</a> <i>*.osm</i> file.
+            </p>
+            <p>
+                <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="onChanged()" name="source">
+                <input type="hidden" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" name="coast">
+            </p>
+            <p>
+                The default Planet file from <a href="http://planet.openstreetmap.org">planet.openstreetmap.org</a> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
+            </p>
+        </form>
+
+        <h3>4. Start Your Instance</h3>
+        <p>
+            Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>.
+        </p>
+        <p>
+            This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
+        </p>
+
+        <p id="userdata"></p>
+        
+        <script type="text/javascript" language="javascript1.5">
+        <!--
+        
+            var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
+
+            map.addCallback('zoomed',    function(m, a) { return onChanged(); });
+            map.addCallback('centered',  function(m, a) { return onChanged(); });
+            map.addCallback('extentset', function(m, a) { return onChanged(); });
+            map.addCallback('panned',    function(m, a) { return onChanged(); });
+            
+            map.setCenterZoom(new mm.Location(0, 0), 1);
+            map.draw();
+        
+        //-->
+        </script>
+
+        <p>
+            The data above must be <strong>copied exactly</strong> to work, including the curly braces (it’s run through a <a href="http://www.json.org/">JSON parser</a>). If you’re using the <a href="http://aws.amazon.com/console/">AWS Management Console</a>, you can do this under the <i>Advanced Options</i> in the instance launch wizard:
+        </p>
+        <p>
+            <a href="userdata-large.jpg" target="_blank"><img class="screen" src="userdata-small.jpg" alt="" width="446" height="298" border="1"></a>
+        </p>
+        <p>
+            (Don’t check “base64 encoded”)
+        </p>
+
+        <h3>5. Sit Tight</h3>
+        <p>
+            Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>, along with an interactive slippy map at <code style="white-space: nowrap;">http://{address}/preview.php</code>.
+        </p>
+        <p>
+            That’s it, you’re done. If you’re happy with how the map looks, then you don’t need to do anything more. As you view more of the map, the tiles will render slowly at first, and then more quickly as they are cached.
+        </p>
+        
+        <p style="text-align: center;">
+            <img src="chest.png" alt="Tile Drawer" width="135" height="149">
+        </p>
+        
+        <p>
+            Contact: <a href="mailto:info@tiledrawer.com">info@tiledrawer.com</a>
+        </p>
+        <p>
+            Logo &amp; illustration by <a href="http://use-it.be/en/page/54/visit-use-it/">Nicolas Marichal, USE-IT</a>.
+        </p>
+        <p>
+            Background by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
+            <br>
+            Used without permission.
+        </p>
+    </div>
+
+</body>
+</html>
