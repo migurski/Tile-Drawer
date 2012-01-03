@@ -8,11 +8,33 @@
     <script src="json2.js" type="text/javascript" language="javascript1.5"></script>
     <script type="text/javascript" language="javascript1.5">
     <!--
-        var mm = com.modestmaps;
+        var mm = com.modestmaps,
+            timeout = undefined;
 
         function limitAndFix(value, lowest, highest)
         {
             return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
+        }
+        
+        function makeUserdata(north, south, east, west)
+        {
+            console.log([north, south, east, west]);
+            
+            var req = new XMLHttpRequest();
+
+            req.onreadystatechange = function()
+            {
+                try {
+                    if(req.status == 200)
+                    {
+                        console.log([req.responseText, req.getResponseHeader('date')]);
+                    }
+                } catch(e) {
+                }
+            }
+            
+            req.open('POST', 'check-bounds.cgi');
+            req.send(['north='+north, 'south='+south, 'east='+east, 'west='+west].join('&'));
         }
         
         function onChanged()
@@ -29,6 +51,9 @@
             var south = limitAndFix(southeast.lat, -85, 85);
             var east = limitAndFix(southeast.lon, -180, 180);
             var west = limitAndFix(northwest.lon, -180, 180);
+            
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(makeUserdata, 500, north, south, east, west);
 
             var styleform = document.forms['style'];
             var dataform = document.forms['data']

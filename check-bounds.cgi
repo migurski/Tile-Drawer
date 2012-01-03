@@ -1,26 +1,35 @@
+#!/usr/bin/env python
+
+from sys import stdin, stderr
 from os.path import basename
-from urlparse import urlparse
+from urlparse import parse_qsl, urlparse
 from itertools import chain, combinations
 
 from psycopg2 import connect
 from shapely.wkb import loads
 from shapely.geometry import Polygon
 
+bounds = dict(parse_qsl(stdin.read()))
+x1, y1, x2, y2 = [float(bounds[key]) for key in 'west south east north'.split()]
+bbox = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
+
 def eval_selection(bbox, extracts):
     """
     """
     hrefs, sizes, polys = zip(*extracts)
     
-    union = reduce(lambda a, b: a.union(b), polys)
-    remainder = bbox.difference(union)
-    size = sum(sizes)
+    try:
+        union = reduce(lambda a, b: a.union(b), polys)
+        remainder = bbox.difference(union)
+        size = sum(sizes)
     
-    return size, remainder.area, hrefs
+    except Exception, e:
+        return float('inf'), 0, []
+    
+    else:
+        return size, remainder.area, hrefs
 
 db = connect(database='tiledrawer', user='tiledrawer').cursor()
-
-x1, y1, x2, y2 = 2.708, 50.424, 3.411, 50.870
-bbox = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
 
 db.execute("""SELECT href, size, AsBinary(geom)
               FROM extracts,
@@ -28,7 +37,8 @@ db.execute("""SELECT href, size, AsBinary(geom)
                 SELECT SetSRID(GeomFromText(%s), 4326) AS bbox
               ) AS bbox
               WHERE geom && bbox
-                AND Intersects(geom, bbox)""", 
+                AND Intersects(geom, bbox)
+                AND Area(geom) > Area(bbox)/4""", 
            (str(bbox), ))
 
 extracts = [(href, size, loads(str(geom))) for (href, size, geom) in db.fetchall()]
@@ -64,6 +74,8 @@ for href in hrefs:
         tasks.append('--rx')
     else:
         raise Exception("Don't know " + name)
+
+print 'Content-Type: text/plain\n'
 
 print 'osmosis \\'
 
