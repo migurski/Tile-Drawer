@@ -1,11 +1,23 @@
 #!/bin/sh -ex
 
 #
-# Use the nginx configuration designed for visibility into setup progress.
+# Package installation.
 #
 
+apt-get -y install nginx
 ln -sf /usr/local/tiledrawer/nginx/setup-time.conf /etc/nginx/sites-enabled/default
 /etc/init.d/nginx restart
+
+apt-get -y install unzip gunicorn memcached \
+                   python-pip python-imaging python-gevent python-memcache \
+                   osm2pgsql postgis python-mapnik \
+
+ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
+pip install TileStache ModestMaps Cascadenik
+
+mv /etc/memcached.conf /etc/memcached-orig.conf
+ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
+/etc/init.d/memcached restart
 
 #
 # Prepare sysctl settings and a better-tuned Postgresql, based on
@@ -22,14 +34,6 @@ mv /etc/postgresql/9.1/main/pg_hba.conf /etc/postgresql/9.1/main/pg_hba-orig.con
 ln -s /usr/local/tiledrawer/postgres/9.1/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
 ln -s /usr/local/tiledrawer/postgres/9.1/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
 /etc/init.d/postgresql restart
-
-#
-# Use our own configuration for other packages.
-#
-
-mv /etc/memcached.conf /etc/memcached-orig.conf
-ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
-/etc/init.d/memcached restart
 
 #
 # Build ourselves a usable OSM planet database.
