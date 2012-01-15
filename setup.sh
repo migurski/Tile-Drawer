@@ -24,6 +24,14 @@ ln -s /usr/local/tiledrawer/postgres/9.1/pg_hba.conf /etc/postgresql/9.1/main/pg
 /etc/init.d/postgresql restart
 
 #
+# Use our own configuration for other packages.
+#
+
+mv /etc/memcached.conf /etc/memcached-orig.conf
+ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
+/etc/init.d/memcached restart
+
+#
 # Build ourselves a usable OSM planet database.
 #
 
