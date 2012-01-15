@@ -4,16 +4,23 @@
 # Package installation.
 #
 
+apt-get -y update
+apt-get -y upgrade
 apt-get -y install nginx
+
 ln -sf /usr/local/tiledrawer/nginx/setup-time.conf /etc/nginx/sites-enabled/default
 /etc/init.d/nginx restart
 
 apt-get -y install unzip gunicorn memcached \
                    python-pip python-imaging python-gevent python-memcache \
-                   osm2pgsql postgis python-mapnik \
+                   osm2pgsql postgis python-mapnik openjdk-6-jre-headless \
 
 ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
 pip install TileStache ModestMaps Cascadenik
+
+cd /usr/local
+curl http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz | tar -xzf -
+ln -s /usr/local/osmosis-0.40.1/bin/osmosis /usr/bin/osmosis
 
 mv /etc/memcached.conf /etc/memcached-orig.conf
 ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
