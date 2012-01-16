@@ -1,6 +1,16 @@
 #!/bin/sh -ex
 
 #
+# It's assumed that /usr/local/tiledrawer already exists.
+#
+
+if [ -d /mnt ]; then
+    ln -s /mnt /usr/local/tiledrawer/progress
+else
+    ln -s /tmp /usr/local/tiledrawer/progress
+fi;
+
+#
 # Package installation.
 #
 
