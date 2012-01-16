@@ -4,11 +4,7 @@ body
     font-family: "MyriadPro-Regular", "Myriad Pro Regular", MyriadPro, "Myriad Pro", trebuchet, verdana, sans-serif;
     color: #4b4f4f;
 
-    background-color: white;
-    background-image: url(game-map.jpg);
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-attachment: fixed;
+    background-color: #eee;
 }
 
 code { font-size: 12px; }
@@ -28,10 +24,35 @@ h1, h2, h3, p, .map-box
     line-height: 1.333em;
 }
 
+#header
+{
+    width: 100%;
+    height: 60px;
+    margin: 32px 0 0 0;
+    padding: 0;
+}
+
+    #header h1
+    {
+    	position: relative;
+    	margin-top: 0;
+    	top: -32px;
+    	height: 120px;
+    	background-image: url(header-white.png);
+    	background-repeat: repeat-x;
+    	background-position: 0 32px;
+    }
+    
+    #header.pegged h1
+    {
+        z-index: 99;
+        position: fixed;
+    }
+
 #content
 {
     width: 448px;
-    margin: 135px auto 4em;
+    margin: 135px auto 4em 135px;
     padding: 17px;
     background-image: url(white-bg.png);
     border: 1px solid #cfeeed;

@@ -69,6 +69,18 @@
             var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
             return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
         }
+        
+        window.onload = function(e)
+        {
+            var head = document.getElementById('header'),
+                top = head.offsetTop;
+            
+            window.onscroll = function(e)
+            {
+                head.className = (document.body.scrollTop > top) ? 'pegged' : '';
+            }
+        }
+        
     //-->
     </script>
     <link rel="stylesheet" href="style.css" type="text/css">
@@ -76,7 +88,9 @@
 <body>
 
     <div id="content">
-        <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
+        <div id="header">
+            <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
+        </div>
         <p>
             Tile Drawer makes designing and hosting custom maps simple and straightforward. The project lets anyone run their own <a href="http://openstreetmap.org">OpenStreetMap</a> server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
         </p>
