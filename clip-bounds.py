@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     extracts = []
     
-    extract_href = 'http://planet.openstreetmap.org/planet-latest.osm.bz2'
+    extract_href = 'http://planet.openstreetmap.org/pbf/planet-latest.osm.pbf'
     
     try:
         content_length, last_modified = size_and_date(extract_href)
