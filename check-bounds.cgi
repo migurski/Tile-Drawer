@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from sys import stdin, stderr
-from os.path import basename
-from urlparse import parse_qsl, urlparse
+from sys import stdin, stdout
+from urlparse import parse_qsl
 from itertools import chain, combinations
 
 from psycopg2 import connect
@@ -57,31 +56,7 @@ selections = [hrefs for (size, left, hrefs) in sorted(selections) if left == 0]
 #
 
 hrefs = selections[0]
-tasks = []
-files = []
 
-for href in hrefs:
-    s, h, path, p, q, f = urlparse(href)
-    name = basename(href)
-    
-    print 'curl --retry 3 -o', name, '-L', href
-
-    files.append(name)
-    
-    if name.endswith('.pbf'):
-        tasks.append('--rb')
-    elif name.endswith('.osm.bz2'):
-        tasks.append('--rx')
-    else:
-        raise Exception("Don't know " + name)
-
-print 'Content-Type: text/plain\n'
-
-print 'osmosis \\'
-
-for (task, file) in zip(tasks, files):
-    print task, file, '\\'
-
-print '--merge ' * len(files[1:]),
-print '--bb', 'left=%.3f bottom=%.3f right=%.3f top=%.3f' % bbox.bounds,
-print '--wx - | bzip2 > out.osm.bz2'
+print >> stdout, 'Content-Type: text/plain\n'
+print >> stdout, '%.4f %.4f %.4f %.4f' % (bbox.bounds[1], bbox.bounds[0], bbox.bounds[3], bbox.bounds[2]),
+print >> stdout, ' '.join(hrefs)
