@@ -73,12 +73,14 @@
         window.onload = function(e)
         {
             var head = document.getElementById('header'),
-                top = head.offsetTop;
+                top = 185;
             
             window.onscroll = function(e)
             {
                 head.className = (document.body.scrollTop > top) ? 'pegged' : '';
             }
+            
+            window.onscroll();
         }
         
     //-->
@@ -91,19 +93,17 @@
         <div id="header">
             <h1><img src="logo.png" alt="Tile Drawer" width="448" height="82"></h1>
         </div>
+
         <p>
             Tile Drawer makes designing and hosting custom maps simple and straightforward. The project lets anyone run their own <a href="http://openstreetmap.org">OpenStreetMap</a> server in the cloud with one-step configuration and zero administration. <i style="white-space: nowrap;">Tile Drawer</i> is a product of <a href="http://stamen.com">Stamen Design’s</a> <a href="http://mike.teczno.com">Michal Migurski</a>.
         </p>
         <p>
-            You can use the rendered map tiles in a number of ways: with other GIS data in <a href="http://openlayers.org/">OpenLayers</a>, in a Flash application built on <a href="http://modestmaps.com/">Modest Maps</a>, or layered into a Google Map as a <a href="http://code.google.com/apis/maps/documentation/overlays.html#CustomMapTiles">custom map tile overlay</a>.
-        </p>
-        <p>
-            This site is <i>really new</i>, read more at the <a href="http://mike.teczno.com/notes/tile-drawer.html">announcement blog post</a>.
+            You can use the rendered map tiles in a number of ways: with <a href="https://github.com/stamen/modestmaps-js">Modest Maps</a>, <a href="http://leaflet.cloudmade.com">Leaflet</a>, <a href="http://openlayers.org/">OpenLayers</a>, or layered into a Google Map as a <a href="http://code.google.com/apis/maps/documentation/overlays.html#CustomMapTiles">custom map tile overlay</a>.
         </p>
 
         <h2>Why &amp; How</h2>
         <p>
-            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can get the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. <span style="white-space: nowrap;">Tile Drawer</span> is designed to make this process easy with a custom-configured <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> <a href="http://aws.amazon.com/ec2/faqs/#How_do_I_load_and_store_my_systems_with_Amazon_EC2">machine image (AMI)</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
+            <a href="http://www.openstreetmap.org">OpenStreetMap</a> is a wiki-style map of the world that anyone can edit. You can get the raw data for roads around the world, set up a server, design a new map style, and have your own personal online interactive maps. In the past, this has been difficult owing to the large volume of data required and the hassles of system administration. <span style="white-space: nowrap;">Tile Drawer</span> is designed to make this process easy with <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> that gets you <strong>up and running with just two pieces of information:</strong> a custom stylesheet that you choose, and the geographical location of a part of the world you'd like rendered.
         </p>
         
         <p style="text-align: center;">
@@ -112,7 +112,7 @@
         
         <h2>Get Started</h2>
         <p>
-            Follow the steps below to select a coverage location, choose a map rendering style, enter a data source, and starting your Tile Drawer instance.
+            Follow the steps below to select a coverage location and start your Tile Drawer.
         </p>
         
         <h3>1. Select A Location</h3>
@@ -216,6 +216,35 @@
             Background by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
             <br>
             Used without permission.
+        </p>
+    </div>
+    
+    <div id="gallery">
+        <h2>Styles</h2>
+        
+        <h3>Toner</h3>
+        <p>
+            <img src="toner.png" width="300" height="300" alt="">
+        </p>
+        
+        <h3>Solar</h3>
+        <p>
+            <img src="osm-solar.png" width="300" height="300" alt="">
+        </p>
+        
+        <h3>Wintermute</h3>
+        <p>
+            <img src="wintermute.png" width="300" height="300" alt="">
+        </p>
+        
+        <h3>Bright</h3>
+        <p>
+            <img src="osm-style.png" width="300" height="300" alt="">
+        </p>
+        
+        <h3>Scratch</h3>
+        <p>
+            <img src="mapscratch.png" width="300" height="300" alt="">
         </p>
     </div>
 

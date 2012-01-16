@@ -58,6 +58,21 @@ h1, h2, h3, p, .map-box
     border: 1px solid #cfeeed;
 }
 
+#gallery
+{
+    position: absolute;
+    top: 240px;
+    left: 650px;
+    width: 302px;
+    
+    border: 1px solid #cfeeed;
+}
+
+    #gallery img
+    {
+        border: 1px solid #4b4f4f;
+    }
+
 .map-box { position: relative; }
 
 .map-box .controls
