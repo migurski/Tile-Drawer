@@ -96,7 +96,7 @@ if __name__ == '__main__':
         print 'Failed', extract_href
     
     else:
-        y1, x1, y2, x2 = -180, -90, 180, 90
+        x1, y1, x2, y2 = -180, -90, 180, 90
         shape = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
         extracts.append((extract_href, content_length, last_modified, shape))
     
