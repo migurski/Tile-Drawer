@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="BBEdit 9.3">
+  <bound box="-0.001797,-0.001797,0.001797,0.001797" origin="http://www.openstreetmap.org/api/0.6"/>
+  <node id="1" version="1" timestamp="1970-01-01T00:00:00Z" uid="1" user="nobody" changeset="1" lat="0.0" lon="0.0">
+    <tag k="name" v="Null Island"/>
+    <tag k="place" v="hamlet"/>
+  </node>
+</osm>
