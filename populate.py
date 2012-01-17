@@ -95,7 +95,8 @@ def import_extract(filename):
     
     # Import new OSM data
     
-    osm2pgsql = 'osm2pgsql -mucK -U osm -d planet_osm -S osm2pgsql/default.style'.split()
+    # TODO: is it safe to ask for 4GB of RAM here? Check /proc/meminfo MemFree.
+    osm2pgsql = 'osm2pgsql -smucK -C 4096 -U osm -d planet_osm -S osm2pgsql/default.style'.split()
     osm2pgsql += [filename]
     
     print >> stderr, '#', ' '.join(osm2pgsql)
