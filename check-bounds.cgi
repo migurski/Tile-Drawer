@@ -2,7 +2,6 @@
 
 from sys import stdin, stdout
 from urlparse import parse_qsl
-from itertools import chain, combinations
 from os.path import dirname, basename, join
 from os import close, environ, chmod
 from tempfile import mkstemp
@@ -38,21 +37,52 @@ def nice_size(size):
     else:
         return '%d %s' % (size, suffix)
 
-def eval_selection(bbox, extracts):
-    """
-    """
-    hrefs, sizes, polys = zip(*extracts)
+def find_selections(open_shape, new_extracts, working_set=[], selections=[]):
+    """ Get a list of valid extract selections for a shape and a list of extracts.
     
-    try:
-        union = reduce(lambda a, b: a.union(b), polys)
-        remainder = bbox.difference(union)
-        size = sum(sizes)
+        A valid selection is a list of extracts that completely covers the
+        shape with no leftover areas. Selections are returned as a list of
+        (size, hrefs) tuples, each a total byte size and list of URLs.
+        
+        For the sake of speed, don't exhaust the whole search space and stop
+        once a reasonable list of selections has been found.
+    """
+    if len(selections) >= 64:
+        # We have enough to work with.
+        return
     
-    except Exception, e:
-        return float('inf'), 0, []
+    if len(new_extracts) == 0:
+        # There are no more extracts to look at.
+        return
+    
+    # Pop a fresh extract from the front of the list of new extracts.
+    (href, size, extract_shape), new_extracts = new_extracts[0], new_extracts[1:]
+    
+    new_working_set = working_set[:] + [(href, size, extract_shape)]
+
+    if open_shape.within(extract_shape):
+        # The uncovered area is covered up by new extract, yay!
+        # Add it to our list of good-enough selections.
+
+        hrefs, sizes, geoms = zip(*new_working_set)
+        selection = sum(sizes), hrefs
+        selections.append(selection)
+    
+    elif open_shape.disjoint(extract_shape) or open_shape.touches(extract_shape):
+        # The extract won't meaningfully affect the uncovered area.
+        pass
     
     else:
-        return size, remainder.area, hrefs
+        # The open_shape area is not covered up the next extract,
+        # but it was at least partially obscured. Dig deeper.
+
+        remaining_shape = open_shape.difference(extract_shape)
+        find_selections(remaining_shape, new_extracts, new_working_set, selections)
+    
+    # Try looking deeper at other combinations without the new area.
+    find_selections(open_shape, new_extracts, working_set, selections)
+    
+    return selections
 
 db = connect(database='tiledrawer', user='tiledrawer').cursor()
 
@@ -63,25 +93,19 @@ db.execute("""SELECT href, size, AsBinary(geom)
               ) AS bbox
               WHERE geom && bbox
                 AND Intersects(geom, bbox)
-                AND Area(geom) > Area(bbox)/4""", 
+                AND Area(geom) > Area(bbox)/4
+                AND IsValid(geom)""", 
            (str(bbox), ))
 
 extracts = [(href, size, loads(str(geom))) for (href, size, geom) in db.fetchall()]
 
 db.close()
 
-# generate a list of possible combinations of extracts
-selections = chain(*[combinations(extracts, length+1) for length in range(len(extracts))])
+from sys import stderr
 
-# measure each selection's total size and uncovered area
-selections = [eval_selection(bbox, selection) for selection in selections]
-
-# find the smallest download that covers the area we want
-selections = [(size, hrefs) for (size, left, hrefs) in sorted(selections) if left == 0]
-
-#
-
+selections = sorted(find_selections(bbox, extracts))
 size, href_list = selections[0]
+
 bounds = '%.4f %.4f %.4f %.4f' % (bbox.bounds[1], bbox.bounds[0], bbox.bounds[3], bbox.bounds[2])
 hrefs = ' '.join(href_list)
 
