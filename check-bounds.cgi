@@ -3,14 +3,40 @@
 from sys import stdin, stdout
 from urlparse import parse_qsl
 from itertools import chain, combinations
+from os.path import dirname, basename, join
+from os import close, environ, chmod
+from tempfile import mkstemp
 
 from psycopg2 import connect
 from shapely.wkb import loads
 from shapely.geometry import Polygon
 
-bounds = dict(parse_qsl(stdin.read()))
-x1, y1, x2, y2 = [float(bounds[key]) for key in 'west south east north'.split()]
+form = dict(parse_qsl(stdin.read()))
+x1, y1, x2, y2 = [float(form[key]) for key in 'west south east north'.split()]
 bbox = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)])
+style = form['style']
+
+def nice_size(size):
+    KB = 1024.
+    MB = 1024. * KB
+    GB = 1024. * MB
+    TB = 1024. * GB
+    
+    if size < KB:
+        size, suffix = size, ''
+    elif size < MB:
+        size, suffix = size/KB, 'KB'
+    elif size < GB:
+        size, suffix = size/MB, 'MB'
+    elif size < TB:
+        size, suffix = size/GB, 'GB'
+    else:
+        size, suffix = size/TB, 'TB'
+    
+    if size < 10:
+        return '%.1f %s' % (size, suffix)
+    else:
+        return '%d %s' % (size, suffix)
 
 def eval_selection(bbox, extracts):
     """
@@ -51,12 +77,28 @@ selections = chain(*[combinations(extracts, length+1) for length in range(len(ex
 selections = [eval_selection(bbox, selection) for selection in selections]
 
 # find the smallest download that covers the area we want
-selections = [hrefs for (size, left, hrefs) in sorted(selections) if left == 0]
+selections = [(size, hrefs) for (size, left, hrefs) in sorted(selections) if left == 0]
 
 #
 
-hrefs = selections[0]
+size, href_list = selections[0]
+bounds = '%.4f %.4f %.4f %.4f' % (bbox.bounds[1], bbox.bounds[0], bbox.bounds[3], bbox.bounds[2])
+hrefs = ' '.join(href_list)
 
+directory = join(dirname(__file__), 'scripts')
+handle, filename = mkstemp(dir=directory, prefix='script-', suffix='.sh.txt')
+close(handle)
+
+chmod(filename, 0666)
+script = open(filename, 'w')
+
+print >> script, 'apt-get -y install git htop'
+print >> script, 'git clone -b config http://linode.teczno.com/~migurski/tiledrawer/.git/ /usr/local/tiledrawer'
+print >> script, '/usr/local/tiledrawer/setup.sh'
+print >> script, '/usr/local/tiledrawer/populate.py -b %(bounds)s -s %(style)s %(hrefs)s' % locals()
+print >> script, '/usr/local/tiledrawer/draw.sh'
+
+print >> stdout, 'X-Extract-Count: %s' % len(href_list)
+print >> stdout, 'X-Extract-Size: %s' % nice_size(size)
 print >> stdout, 'Content-Type: text/plain\n'
-print >> stdout, '%.4f %.4f %.4f %.4f' % (bbox.bounds[1], bbox.bounds[0], bbox.bounds[3], bbox.bounds[2]),
-print >> stdout, ' '.join(hrefs)
+print >> stdout, '#!/bin/sh -ex\n# Download %s of OSM data from %s extract%s.\ncurl -s http://%s%s/scripts/%s | /bin/sh -ex' % (nice_size(size), len(href_list), len(href_list) > 1 and 's' or '', environ['HTTP_HOST'], dirname(environ['SCRIPT_NAME']), basename(filename))

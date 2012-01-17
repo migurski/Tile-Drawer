@@ -16,7 +16,7 @@
             return (new Number(Math.max(lowest, Math.min(highest, value)))).toFixed(3);
         }
         
-        function makeUserdata(north, south, east, west)
+        function makeUserdata(style, north, south, east, west)
         {
             console.log([north, south, east, west]);
             
@@ -27,14 +27,21 @@
                 try {
                     if(req.status == 200)
                     {
-                        console.log([req.responseText, req.getResponseHeader('date')]);
+                        console.log([req.responseText, req.getResponseHeader('x-extract-size')]);
+
+                        var userdata = document.getElementById('userdata');
+                        
+                        if(userdata)
+                        {
+                            userdata.innerHTML = req.responseText;
+                        }
                     }
                 } catch(e) {
                 }
             }
             
             req.open('POST', 'check-bounds.cgi');
-            req.send(['north='+north, 'south='+south, 'east='+east, 'west='+west].join('&'));
+            req.send(['north='+north, 'south='+south, 'east='+east, 'west='+west, 'style='+style].join('&'));
         }
         
         function onChanged()
@@ -52,14 +59,13 @@
             var east = limitAndFix(southeast.lon, -180, 180);
             var west = limitAndFix(northwest.lon, -180, 180);
             
-            window.clearTimeout(timeout);
-            timeout = window.setTimeout(makeUserdata, 500, north, south, east, west);
-
-            var styleform = document.forms['style'];
-            var userdata = document.getElementById('userdata');
+            var styleform = document.forms.style;
             
-            if(styleform && userdata)
-                userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n}\n';
+            if(styleform)
+            {
+                window.clearTimeout(timeout);
+                timeout = window.setTimeout(makeUserdata, 500, styleform.elements.url.value, north, south, east, west);
+            }
         }
         
         function chooseStyle(url)
@@ -143,7 +149,7 @@
                 Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>, a Tile Drawer description, or just click one of the styles on this page.
             </p>
             <p>
-                <input type="text" style="width: 440px;" value="http://tiledrawer.com/mapscratch.mml" onchange="onChanged()" name="url">
+                <input type="text" style="width: 440px;" value="https://github.com/migurski/OSM-Solar/raw/tiledrawer/tiledrawer.cfg" onchange="onChanged()" name="url">
             </p>
         </form>
 
