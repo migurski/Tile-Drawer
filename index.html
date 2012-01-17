@@ -56,12 +56,10 @@
             timeout = window.setTimeout(makeUserdata, 500, north, south, east, west);
 
             var styleform = document.forms['style'];
-            var dataform = document.forms['data']
-            
             var userdata = document.getElementById('userdata');
             
-            if(styleform && dataform && userdata)
-                userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
+            if(styleform && userdata)
+                userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n}\n';
         }
         
         function chooseStyle(url)
@@ -120,7 +118,7 @@
         
         <h2>Get Started</h2>
         <p>
-            Follow the steps below to select a coverage location and start your Tile Drawer.
+            Follow the <strong>three steps below</strong> to select a coverage location and start your Tile Drawer.
         </p>
         
         <h3>1. Select A Location</h3>
@@ -149,21 +147,7 @@
             </p>
         </form>
 
-        <h3>3. Pick A Data Source</h3>
-        <form id="data" action="#" method="get" onsubmit="return false;">
-            <p>
-                Enter the complete URL of an OpenStreetMap dump file, generally a <a href="http://en.wikipedia.org/wiki/Bzip2">bzipped</a> <i>*.osm</i> file.
-            </p>
-            <p>
-                <input type="text" style="width: 440px;" value="http://planet.openstreetmap.org/planet-latest.osm.bz2" onchange="onChanged()" name="source">
-                <input type="hidden" value="http://hypercube.telascience.org/~kleptog/processed_p.zip" name="coast">
-            </p>
-            <p>
-                The default Planet file from <a href="http://planet.openstreetmap.org">planet.openstreetmap.org</a> is a weekly dump of the complete OpenStreetMap data set, and is very large. For faster startup time, you can specify an alternate data source such as an <i>*.osm.bz2</i> extract from <a href="http://downloads.cloudmade.com/">Cloudmade’s per-country downloads</a>.
-            </p>
-        </form>
-
-        <h3>4. Start Your Instance</h3>
+        <h3>3. Start Your Instance</h3>
         <p>
             Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>.
         </p>
@@ -199,7 +183,7 @@
             (Don’t check “base64 encoded”)
         </p>
 
-        <h3>5. Sit Tight</h3>
+        <h3>4. Sit Tight</h3>
         <p>
             Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>, along with an interactive slippy map at <code style="white-space: nowrap;">http://{address}/preview.php</code>.
         </p>
