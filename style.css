@@ -46,29 +46,34 @@ h1, h2, h3, p, .map-box
     	background-position: 0 32px;
     }
     
+    /*
     #header.pegged h1
     {
         z-index: 99;
         position: fixed;
     }
+    */
 
 #content
 {
     width: 448px;
-    margin: 135px auto 4em 135px;
-    padding: 17px;
+    margin: 100px auto 4em 100px;
+    padding: 17px 34px;
     background-image: url(white-bg.png);
     border: 1px solid #cfeeed;
 }
 
+    #content h3
+    {
+        margin-top: 2em;
+    }
+
 #gallery
 {
     position: absolute;
-    top: 240px;
-    left: 650px;
+    top: 205px;
+    left: 655px;
     width: 302px;
-    
-    border: 1px solid #cfeeed;
 }
 
     #gallery img

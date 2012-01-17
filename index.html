@@ -9,7 +9,8 @@
     <script type="text/javascript" language="javascript1.5">
     <!--
         var mm = com.modestmaps,
-            timeout = undefined;
+            timeout = undefined,
+            mmap = undefined;
 
         function limitAndFix(value, lowest, highest)
         {
@@ -20,21 +21,19 @@
         {
             console.log([north, south, east, west]);
             
-            var req = new XMLHttpRequest();
+            var req = new XMLHttpRequest(),
+                userdata = document.getElementById('userdata');
 
+            userdata.className = 'loading';
+            userdata.innerHTML = '\n\n\n';
+            
             req.onreadystatechange = function()
             {
                 try {
                     if(req.status == 200)
                     {
-                        console.log([req.responseText, req.getResponseHeader('x-extract-size')]);
-
-                        var userdata = document.getElementById('userdata');
-                        
-                        if(userdata)
-                        {
-                            userdata.innerHTML = req.responseText;
-                        }
+                        userdata.className = '';
+                        userdata.innerHTML = req.responseText;
                     }
                 } catch(e) {
                 }
@@ -49,10 +48,10 @@
             var buffer = 33; // extra space around the visible map
             
             var topleft = new mm.Point(-buffer, -buffer);
-            var bottomright = new mm.Point(map.dimensions.x + buffer, map.dimensions.y + buffer);
+            var bottomright = new mm.Point(mmap.dimensions.x + buffer, mmap.dimensions.y + buffer);
 
-            var northwest = map.pointLocation(topleft);
-            var southeast = map.pointLocation(bottomright);
+            var northwest = mmap.pointLocation(topleft);
+            var southeast = mmap.pointLocation(bottomright);
             
             var north = limitAndFix(northwest.lat, -85, 85);
             var south = limitAndFix(southeast.lat, -85, 85);
@@ -76,7 +75,8 @@
             return false;
         }
         
-        var tileURL = function(coord) {
+        var tileURL = function(coord)
+        {
             return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
             var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
             return 'http://' + sub + '.tile.openstreetmap.org/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
@@ -84,6 +84,17 @@
         
         window.onload = function(e)
         {
+            mmap = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
+
+            mmap.addCallback('zoomed',    function(m, a) { return onChanged(); });
+            mmap.addCallback('centered',  function(m, a) { return onChanged(); });
+            mmap.addCallback('extentset', function(m, a) { return onChanged(); });
+            mmap.addCallback('panned',    function(m, a) { return onChanged(); });
+            
+            mmap.setCenterZoom(new mm.Location(0, 0), 1);
+            mmap.draw();
+
+            /*
             var head = document.getElementById('header'),
                 top = 185;
             
@@ -93,6 +104,7 @@
             }
             
             window.onscroll();
+            */
         }
         
     //-->
@@ -139,14 +151,11 @@
                 <a href="javascript:map.setCenterZoom(new mm.Location(0, 0), 1)">See All</a>
             </div>
         </div>
-        <p>
-            A small Amazon EC2 instance (1 CPU, 512MB RAM) is sufficient to comfortably render a small state, region, or major metropolitan area. This is a rule of thumb, you may want to experiment a bit if you’re unsure. Start small!
-        </p>
 
         <h3>2. Choose Your Style</h3>
         <form name="style" action="#" method="get" onsubmit="return false;">
             <p>
-                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>, a Tile Drawer description, or just click one of the styles on this page.
+                Enter the complete URL of a Cascadenik stylesheet, a Tile Drawer description, or just click one of the styles on this page.
             </p>
             <p>
                 <input type="text" style="width: 440px;" value="https://github.com/migurski/OSM-Solar/raw/tiledrawer/tiledrawer.cfg" onchange="onChanged()" name="url">
@@ -155,43 +164,19 @@
 
         <h3>3. Start Your Instance</h3>
         <p>
-            Launch an instance of Amazon EC2 AMI <b>ami-e1ea0a88</b>.
-        </p>
-        <p>
             This is the user data you’ll provide to your Amazon EC2 instance when you’re ready to launch it:
         </p>
-
         <p id="userdata"></p>
-        
-        <script type="text/javascript" language="javascript1.5">
-        <!--
-        
-            var map = new mm.Map('map', new mm.MapProvider(tileURL), new mm.Point(446, 446));
-
-            map.addCallback('zoomed',    function(m, a) { return onChanged(); });
-            map.addCallback('centered',  function(m, a) { return onChanged(); });
-            map.addCallback('extentset', function(m, a) { return onChanged(); });
-            map.addCallback('panned',    function(m, a) { return onChanged(); });
-            
-            map.setCenterZoom(new mm.Location(0, 0), 1);
-            map.draw();
-        
-        //-->
-        </script>
-
         <p>
-            The data above must be <strong>copied exactly</strong> to work, including the curly braces (it’s run through a <a href="http://www.json.org/">JSON parser</a>). If you’re using the <a href="http://aws.amazon.com/console/">AWS Management Console</a>, you can do this under the <i>Advanced Options</i> in the instance launch wizard:
+            The data above must be <strong>copied exactly</strong> to work—all three lines, starting with the <code>#!/bin/sh</code>.
         </p>
         <p>
-            <a href="userdata-large.jpg" target="_blank"><img class="screen" src="userdata-small.jpg" alt="" width="446" height="298" border="1"></a>
-        </p>
-        <p>
-            (Don’t check “base64 encoded”)
+            Select an <a href="https://wiki.ubuntu.com/OneiricOcelot">Ubuntu 11.10</a> AMI. Eric Hammond at <a href="http://alestic.com/">Alestic</a> has an excellent selection of Ubuntu images that I recommend; the 64-bit EBS boot <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-6fa27506">ami-6fa27506 in us-east-1</a> running on a Large or High-CPU instance type is generally a great choice for map rendering.
         </p>
 
-        <h3>4. Sit Tight</h3>
+        <h3>Finally…</h3>
         <p>
-            Depending on your data source and location, it can take anywhere from 15 minutes to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{address}/status.php</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{address}/tilecache/1.0.0/osm/{Z}/{X}/{Y}.png</code>, along with an interactive slippy map at <code style="white-space: nowrap;">http://{address}/preview.php</code>.
+            Depending on your data source and location, it can take anywhere from a few minutes for a single city to many hours for your new instance to unpack itself. You can check up on the process by visiting <code style="white-space: nowrap;">http://{address}/</code>, and when it is complete individual tiles will be available at <code style="white-space: nowrap;">http://{address}/tiles/{Z}/{X}/{Y}.png</code>, along with an interactive slippy map at <code style="white-space: nowrap;">http://{address}/tiles/preview.html</code>.
         </p>
         <p>
             That’s it, you’re done. If you’re happy with how the map looks, then you don’t need to do anything more. As you view more of the map, the tiles will render slowly at first, and then more quickly as they are cached.
