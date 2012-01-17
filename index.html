@@ -64,6 +64,14 @@
                 userdata.innerHTML = '{\n    "style": '+JSON.stringify(styleform.elements['url'].value)+',\n    "bbox": ['+west+', '+south+', '+east+', '+north+'],\n    "source": '+JSON.stringify(dataform.elements['source'].value)+',\n    "coast": '+JSON.stringify(dataform.elements['coast'].value)+'\n}\n';
         }
         
+        function chooseStyle(url)
+        {
+            document.forms.style.elements.url.value = url;
+            onChanged();
+            
+            return false;
+        }
+        
         var tileURL = function(coord) {
             return 'http://tile.cloudmade.com/f1fe9c2761a15118800b210c0eda823c/1/256/' + coord.zoom + '/' + coord.column + '/' + coord.row + '.png';
             var sub = ['a', 'b', 'c'][(coord.zoom + coord.column + coord.row) % 3];
@@ -134,13 +142,10 @@
         <h3>2. Choose Your Style</h3>
         <form name="style" action="#" method="get" onsubmit="return false;">
             <p>
-                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>.
+                Enter the complete URL of a <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik stylesheet</a>, a Tile Drawer description, or just click one of the styles on this page.
             </p>
             <p>
                 <input type="text" style="width: 440px;" value="http://tiledrawer.com/mapscratch.mml" onchange="onChanged()" name="url">
-            </p>
-            <p>
-                Check the <a href="gallery.html">Map Styles page</a> for a few pre-made styles that you can use now, or as a basis for writing your own. The default one above is “<a href="gallery.html#scratch">Scratch</a>”.
             </p>
         </form>
 
@@ -212,39 +217,54 @@
         <p>
             Logo &amp; illustration by <a href="http://use-it.be/en/page/54/visit-use-it/">Nicolas Marichal, USE-IT</a>.
         </p>
-        <p>
-            Background by <a href="http://plagmada.org/gallery/main.php?g2_itemId=1150">David McLouth, PlaGMaDA</a>.
-            <br>
-            Used without permission.
-        </p>
     </div>
     
     <div id="gallery">
         <h2>Styles</h2>
         
+        <p>
+            <a href="#" title="Choose Toner" onclick="return chooseStyle('https://github.com/Citytracking/Toner');"><img src="toner.png" width="300" height="300" alt=""></a>
+        </p>
         <h3>Toner</h3>
-        <p>
-            <img src="toner.png" width="300" height="300" alt="">
+        <p class="description">
+            Designed for <a href="http://dotspotting.org">Stamen’s Dotspotting</a>, Toner is a modernist style  inspired by the look of paper photocopies and printed documents.
+            <button onclick="return chooseStyle('https://github.com/Citytracking/Toner');">Choose Toner</button>
         </p>
         
-        <h3>Solar</h3>
         <p>
-            <img src="osm-solar.png" width="300" height="300" alt="">
+            <a href="#" title="Choose Bright" onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');"><img src="osm-style.png" width="300" height="300" alt=""></a>
         </p>
-        
-        <h3>Wintermute</h3>
-        <p>
-            <img src="wintermute.png" width="300" height="300" alt="">
-        </p>
-        
         <h3>Bright</h3>
-        <p>
-            <img src="osm-style.png" width="300" height="300" alt="">
+        <p class="description">
+            This is the style that ships with <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik</a>, <a href="http://mike.teczno.com/notes/cascadenik-openstreetmap.html">in 2008</a>. It’s largely primary colors, and has definitions for a variety of scales. Residential roads are used for texture at small scales. The road widths defined here later informed <a href="http://stamen.com/clients/cloudmade">Stamen’s design work for Cloudmade</a>.
+            <button onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');">Choose Bright</button>
         </p>
         
-        <h3>Scratch</h3>
         <p>
-            <img src="mapscratch.png" width="300" height="300" alt="">
+            <a href="#" title="Choose Solar" onclick="return chooseStyle('https://github.com/migurski/OSM-Solar/raw/tiledrawer/tiledrawer.cfg');"><img src="osm-solar.png" width="300" height="300" alt=""></a>
+        </p>
+        <h3>Solar</h3>
+        <p class="description">
+            Developed to create maximally-compressed tiles to fit onto a portable GIS / disaster response system from <a href="http://www.tethr.org/">Tethr</a> with colors sampled from Ethan Schoonover’s <a href="http://ethanschoonover.com/solarized">Solarized</a>.
+            <button onclick="return chooseStyle('https://github.com/migurski/OSM-Solar/raw/tiledrawer/tiledrawer.cfg');">Choose Solar</button>
+        </p>
+        
+        <p>
+            <a href="#" title="Choose Wintermute" onclick="return chooseStyle('https://github.com/migurski/HighRoad/');"><img src="wintermute.png" width="300" height="300" alt=""></a>
+        </p>
+        <h3>Wintermute</h3>
+        <p class="description">
+            Dark ground with light-colored water, entirely gray with motorways highlighted in bright saffron. No text. Designed for <a href="https://github.com/migurski/HighRoad/">OSM High Road</a>.
+            <button onclick="return chooseStyle('https://github.com/migurski/HighRoad/');">Choose Wintermute</button>
+        </p>
+        
+        <p>
+            <a href="#" title="Choose Scratch" onclick="return chooseStyle('http://tiledrawer.com/mapscratch.mml');"><img src="mapscratch.png" width="300" height="300" alt=""></a>
+        </p>
+        <h3>Scratch</h3>
+        <p class="description">
+            Demonstration style produced for the <a href="http://mapsfromscratch.com/">Where 2.0 Maps From Scratch workshop</a>, where Stamen colleague Shawn Allen and I showed how to generate road cartography from raw data and first principles. <i>Scratch</i> is designed to work at just a few scales.
+            <button onclick="return chooseStyle('http://tiledrawer.com/mapscratch.mml');">Choose Scratch</button>
         </p>
     </div>
 
