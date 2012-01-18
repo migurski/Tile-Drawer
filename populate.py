@@ -189,11 +189,20 @@ def import_coastline(filename, bbox=None):
         raise Exception('wuh-woh')
 
 def import_style(url):
+    """
+    """
+    if url.endswith('.cfg'):
+        return import_style_tdcfg(url)
+    
+    elif url.endswith('.mml'):
+        return import_style_mml(url)
+
+def import_style_tdcfg(url):
     """ Load a Cascadenik style and its constituent pieces from a URL.
     """
     style = json.loads(urlopen(url).read())
     mapfile = urljoin(options.style, style['mapfile'])
-    
+
     # Create a local style.xml file by way of a dummy mapnik.Map instance.
     
     mmap = mapnik.Map(1, 1)
@@ -228,6 +237,33 @@ def import_style(url):
             value['palette'] = 'palette.act'
         
         layer[parameter] = value
+    
+    # Done.
+    
+    json.dump(config, open('gunicorn/tilestache.cfg', 'w'), indent=2)
+
+def import_style_mml(url):
+    """
+    """
+    # Create a local style.xml file by way of a dummy mapnik.Map instance.
+    
+    mmap = mapnik.Map(1, 1)
+    mmap.srs = epsg900913
+    cascadenik.load_map(mmap, url, 'gunicorn', verbose=False)
+    mapnik.save_map(mmap, 'gunicorn/style.xml')
+    
+    # Build a new TileStache configuration file.
+    
+    config = json.load(open('gunicorn/tilestache.cfg'))
+    
+    config['layers'] = {'tiles': {'provider': {}}}
+    layer = config['layers']['tiles']
+    
+    layer['provider']['name'] = 'mapnik'
+    layer['provider']['mapfile'] = 'style.xml'
+    layer['bounds'] = dict(zip('south west north east'.split(), options.bbox))
+    layer['bounds'].update(dict(low=0, high=18))
+    layer['preview'] = dict(zoom=15, lat=(options.bbox[0]/2 + options.bbox[2]/2), lon=(options.bbox[1]/2 + options.bbox[3]/2))
     
     # Done.
     
