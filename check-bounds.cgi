@@ -116,11 +116,11 @@ close(handle)
 chmod(filename, 0666)
 script = open(filename, 'w')
 
-print >> script, 'apt-get -y install git htop'
-print >> script, 'git clone -b config http://linode.teczno.com/~migurski/tiledrawer/.git/ /usr/local/tiledrawer'
-print >> script, '/usr/local/tiledrawer/setup.sh'
-print >> script, '/usr/local/tiledrawer/populate.py -b %(bounds)s -s %(style)s %(hrefs)s' % locals()
-print >> script, '/usr/local/tiledrawer/draw.sh'
+print >> script, 'apt-get -y install git htop >> /var/log/tiledrawer.log 2>&1'
+print >> script, 'git clone -b config http://tiledrawer.com/.git/ /usr/local/tiledrawer >> /var/log/tiledrawer.log 2>&1'
+print >> script, '/usr/local/tiledrawer/setup.sh >> /var/log/tiledrawer.log 2>&1'
+print >> script, '/usr/local/tiledrawer/populate.py -b %(bounds)s -s %(style)s %(hrefs)s >> /var/log/tiledrawer.log 2>&1' % locals()
+print >> script, '/usr/local/tiledrawer/draw.sh >> /var/log/tiledrawer.log 2>&1'
 
 print >> stdout, 'X-Extract-Count: %s' % len(href_list)
 print >> stdout, 'X-Extract-Size: %s' % nice_size(size)
