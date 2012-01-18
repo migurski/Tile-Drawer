@@ -125,4 +125,4 @@ print >> script, '/usr/local/tiledrawer/draw.sh >> /var/log/tiledrawer.log 2>&1'
 print >> stdout, 'X-Extract-Count: %s' % len(href_list)
 print >> stdout, 'X-Extract-Size: %s' % nice_size(size)
 print >> stdout, 'Content-Type: text/plain\n'
-print >> stdout, '#!/bin/sh -ex\n# Download %s of OSM data from %s extract%s.\ncurl -s http://%s%s/scripts/%s | /bin/sh -ex' % (nice_size(size), len(href_list), len(href_list) > 1 and 's' or '', environ['HTTP_HOST'], dirname(environ['SCRIPT_NAME']), basename(filename))
+print >> stdout, '#!/bin/sh -ex\n# Download %s of OSM data from %s extract%s.\ncurl -s http://%s%s/scripts/%s | /bin/sh -ex' % (nice_size(size), len(href_list), len(href_list) > 1 and 's' or '', environ['HTTP_HOST'], dirname(environ['SCRIPT_NAME']).rstrip('/'), basename(filename))
