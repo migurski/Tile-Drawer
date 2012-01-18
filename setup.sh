@@ -8,7 +8,9 @@ if [ -d /mnt ]; then
     ln -s /mnt /usr/local/tiledrawer/progress
 else
     ln -s /tmp /usr/local/tiledrawer/progress
-fi;
+fi
+
+ln -s /var/log/tiledrawer.log /usr/local/tiledrawer/progress/tiledrawer.log
 
 #
 # Package installation.
