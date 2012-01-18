@@ -39,7 +39,7 @@ def download_file(url):
     
     curl = 'curl', '-o', filename, '-L', url
 
-    print >> stderr, '#', ' '.join(curl)
+    print >> stderr, '+', ' '.join(curl)
 
     curl = Popen(curl, stdout=stdout, stderr=PIPE)
     curl.wait()
@@ -63,7 +63,7 @@ def combine_extracts(bbox, files):
 
     handle, filename = mkstemp(dir='progress', prefix='out-', suffix='.osm.bz2')
     
-    print >> stderr, '#', ' '.join(osmosis), '| bzip2 >', filename
+    print >> stderr, '+', ' '.join(osmosis), '| bzip2 >', filename
     
     osmosis = Popen(osmosis, stderr=open('progress/osmosis.log', 'w'), stdout=PIPE)
     bzout = Popen(['bzip2'], stdin=osmosis.stdout, stdout=open(filename, 'w'))
@@ -99,7 +99,7 @@ def import_extract(filename):
     osm2pgsql = 'osm2pgsql -smucK -C 4096 -U osm -d planet_osm -S osm2pgsql/default.style'.split()
     osm2pgsql += [filename]
     
-    print >> stderr, '#', ' '.join(osm2pgsql)
+    print >> stderr, '+', ' '.join(osm2pgsql)
     
     logfile = open('progress/osm2pgsql.log', 'w')
     osm2pgsql = Popen(osm2pgsql, stdout=logfile, stderr=logfile)
@@ -126,7 +126,7 @@ def download_coastline():
     """
     curl = 'curl -L http://osm-metro-extracts.s3.amazonaws.com/coastline-good-latlon.tar.bz2'.split()
     
-    print >> stderr, '#', ' '.join(curl), '| bzcat | tar -C progress -xf -'
+    print >> stderr, '+', ' '.join(curl), '| bzcat | tar -C progress -xf -'
     
     curl = Popen(curl, stdout=PIPE, stderr=PIPE)
     bzcat = Popen('bzcat'.split(), stdin=curl.stdout, stdout=PIPE, stderr=PIPE)
@@ -163,7 +163,7 @@ def import_coastline(filename, bbox=None):
     
     ogr2ogr += [extract_filename, filename]
     
-    print >> stderr, '#', ' '.join(ogr2ogr)
+    print >> stderr, '+', ' '.join(ogr2ogr)
     
     ogr2ogr = Popen(ogr2ogr)
     ogr2ogr.wait()
@@ -174,7 +174,7 @@ def import_coastline(filename, bbox=None):
     shp2pgsql = 'shp2pgsql', '-dID', '-s', '900913', extract_filename, 'coastline'
     psql = 'psql -U osm planet_osm'.split()
     
-    print >> stderr, '#', ' '.join(shp2pgsql), '|', ' '.join(psql)
+    print >> stderr, '+', ' '.join(shp2pgsql), '|', ' '.join(psql)
     
     shp2pgsql = Popen(shp2pgsql, stdout=PIPE, stderr=PIPE)
     psql = Popen(psql, stdin=shp2pgsql.stdout, stdout=PIPE, stderr=PIPE)
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     options, urls = parser.parse_args()
     
     if dirname(__file__):
-        print >> stderr, '# chdir', dirname(__file__)
+        print >> stderr, '+ chdir', dirname(__file__)
         chdir(dirname(__file__))
 
     import_extract('postgres/init-data/null.osm')

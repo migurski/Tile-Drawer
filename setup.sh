@@ -30,7 +30,7 @@ ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
 pip install TileStache ModestMaps Cascadenik
 
 # recent osmosis will have to be done manually
-curl http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz | tar -C /usr/local -xzf -
+curl -s http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz | tar -C /usr/local -xzf -
 ln -s /usr/local/osmosis-0.40.1/bin/osmosis /usr/bin/osmosis
 
 mv /etc/memcached.conf /etc/memcached-orig.conf
