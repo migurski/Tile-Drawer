@@ -4,9 +4,6 @@
 
 <!DOCTYPE Map[
 
-    <!-- coastline settings -->
-    <!ENTITY coastlines_srs "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
-    
     <!-- osm2pgsql defaults to importing OSM data in mercator projection (+proj=merc) -->
     <!-- this is also the projection the map should be in for serving tiles in the standard way -->
     <!ENTITY map_srs "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
@@ -29,7 +26,7 @@
     <!ENTITY port "5432">
     <!ENTITY user "osm">
     <!ENTITY password "">
-    <!ENTITY dbname "osm">
+    <!ENTITY dbname "planet_osm">
 ]>
 <Map srs="&map_srs;">
   <Stylesheet>
@@ -49,24 +46,24 @@
     #lines[highway=motorway],
     #lines[highway=motorway_link]
     {
-    	line-width: 4;
-	line-color: #000;
+        line-width: 4;
+        line-color: #000;
     }
 
     #lines[highway=primary],
     #lines[highway=secondary],
     #lines[highway=tertiary]
     {
-    	line-width: 3;
-	line-color: #666;
+        line-width: 3;
+        line-color: #666;
     }
 
     #lines[highway=residential],
     #lines[highway=unclassified],
     #lines[highway=service]
     {
-    	line-width: 1;
-	line-color: #666;
+        line-width: 1;
+        line-color: #666;
     }
 
     #lines[highway=primary] name,
@@ -76,24 +73,24 @@
     #lines[highway=unclassified] name,
     #lines[highway=service] name
     {
-    	text-face-name: 'DejaVu Sans Book';
-	text-placement: line;
-	text-max-char-angle-delta: 20;
-	text-avoid-edges: true;
-	text-min-distance: 100;
-	text-fill: #000;
-	text-size: 10;
-	text-dy: 6;
-	text-halo-radius: 1;
-	text-halo-fill: #efe;
+        text-face-name: 'DejaVu Sans Book';
+        text-placement: line;
+        text-max-char-angle-delta: 20;
+        text-avoid-edges: true;
+        text-min-distance: 100;
+        text-fill: #000;
+        text-size: 10;
+        text-dy: 6;
+        text-halo-radius: 1;
+        text-halo-fill: #efe;
     }
 
     #lines[highway=primary] name,
     #lines[highway=secondary] name,
     #lines[highway=tertiary] name
     {
-    	text-face-name: 'DejaVu Sans Bold';
-	text-size: 12;
+        text-face-name: 'DejaVu Sans Bold';
+        text-size: 12;
     }
 
     #lines[highway=motorway][is_bridge=yes],
@@ -105,12 +102,12 @@
     #lines[highway=unclassified][is_bridge=yes],
     #lines[highway=service][is_bridge=yes]
     {
-    	outline-width: 1;
-	outline-color: #efe;
+        outline-width: 1;
+        outline-color: #efe;
     }
   </Stylesheet>
 
-  <Layer id="land" srs="&coastlines_srs;">
+  <Layer id="land" srs="&map_srs;">
     <Datasource>
       <Parameter name="type">postgis</Parameter>
       <Parameter name="host">&host;</Parameter>
@@ -136,7 +133,7 @@
       <Parameter name="estimate_extent">&estimate_extent;</Parameter>
       <Parameter name="extent">&extent;</Parameter>
 
-      <Parameter name="table">osm_polygon</Parameter>
+      <Parameter name="table">planet_osm_polygon</Parameter>
     </Datasource>
   </Layer>
   <Layer id="lines" srs="&osm_srs;">
@@ -166,7 +163,7 @@
                         (CASE WHEN bridge IN ('yes', 'true') THEN 'yes'
                               ELSE 'no' END) AS is_bridge
 
-                 FROM osm_line
+                 FROM planet_osm_line
 
                  WHERE railway IN ('rail', 'spur', 'subway', 'light_rail', 'tram', 'abandoned', 'disused', 'monorail')
                     OR highway IN ('secondary', 'trunk', 'trunk_link', 'primary', 'primary_link', 'motorway', 'motorway_link')
