@@ -124,6 +124,9 @@
         <p>
             You can use the rendered map tiles in a number of ways: with <a href="https://github.com/stamen/modestmaps-js">Modest Maps</a>, <a href="http://leaflet.cloudmade.com">Leaflet</a>, <a href="http://openlayers.org/">OpenLayers</a>, or layered into a Google Map as a <a href="http://code.google.com/apis/maps/documentation/overlays.html#CustomMapTiles">custom map tile overlay</a>.
         </p>
+        <p>
+            <em>Update, January 2012: Tile Drawer is back after a period offline when the original Amazon AMI disappeared. I’ve re-written Tile Drawer to use a startup script approach that eliminates the dependency on EC2, and makes the internals of Tile Drawer easier to understand. Find everything on <a href="https://github.com/migurski/Tile-Drawer">Github</a>.</em>
+        </p>
 
         <h2>Why &amp; How</h2>
         <p>
@@ -171,7 +174,10 @@
             The data above must be <strong>copied exactly</strong> to work—all three lines, starting with the <code>#!/bin/sh</code>.
         </p>
         <p>
-            Select an <a href="https://wiki.ubuntu.com/OneiricOcelot">Ubuntu 11.10</a> AMI. Eric Hammond at <a href="http://alestic.com/">Alestic</a> has an excellent selection of Ubuntu images that I recommend; the 64-bit EBS boot <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-6fa27506">ami-6fa27506 in us-east-1</a> running on a Large or High-CPU instance type is generally a great choice for map rendering.
+            Select an <a href="https://wiki.ubuntu.com/OneiricOcelot">Ubuntu 11.10</a> AMI. Eric Hammond at <a href="http://alestic.com/">Alestic</a> has an excellent collection of Ubuntu images that I recommend; a 64-bit EBS boot running on a Large or High-CPU instance type is generally a great choice for map rendering.
+        </p>
+        <p>
+            If you’re in EC2 region us-east-1, try <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-6fa27506">ami-6fa27506</a>.
         </p>
 
         <h3>Finally…</h3>
@@ -196,23 +202,8 @@
     
     <div id="gallery">
         <h2>Styles</h2>
-        
         <p>
-            <a href="#" title="Choose Toner" onclick="return chooseStyle('https://github.com/Citytracking/Toner');"><img src="toner.png" width="300" height="300" alt=""></a>
-        </p>
-        <h3>Toner</h3>
-        <p class="description">
-            Designed for <a href="http://dotspotting.org">Stamen’s Dotspotting</a>, Toner is a modernist style  inspired by the look of paper photocopies and printed documents.
-            <button onclick="return chooseStyle('https://github.com/Citytracking/Toner');">Choose Toner</button>
-        </p>
-        
-        <p>
-            <a href="#" title="Choose Bright" onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');"><img src="osm-style.png" width="300" height="300" alt=""></a>
-        </p>
-        <h3>Bright</h3>
-        <p class="description">
-            This is the style that ships with <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik</a>, <a href="http://mike.teczno.com/notes/cascadenik-openstreetmap.html">in 2008</a>. It’s largely primary colors, and has definitions for a variety of scales. Residential roads are used for texture at small scales. The road widths defined here later informed <a href="http://stamen.com/clients/cloudmade">Stamen’s design work for Cloudmade</a>.
-            <button onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');">Choose Bright</button>
+            I have a few ready-made map styles to choose from below—click on one to select it. I’ll be expanding this list with new ones soon, and if you have one to contribute <a href="mailto:info@tiledrawer.com">let me know</a>.
         </p>
         
         <p>
@@ -225,12 +216,12 @@
         </p>
         
         <p>
-            <a href="#" title="Choose Wintermute" onclick="return chooseStyle('https://github.com/migurski/HighRoad/');"><img src="wintermute.png" width="300" height="300" alt=""></a>
+            <a href="#" title="Choose Bright" onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');"><img src="osm-style.png" width="300" height="300" alt=""></a>
         </p>
-        <h3>Wintermute</h3>
+        <h3>Bright</h3>
         <p class="description">
-            Dark ground with light-colored water, entirely gray with motorways highlighted in bright saffron. No text. Designed for <a href="https://github.com/migurski/HighRoad/">OSM High Road</a>.
-            <button onclick="return chooseStyle('https://github.com/migurski/HighRoad/');">Choose Wintermute</button>
+            This is the style that ships with <a href="http://code.google.com/p/mapnik-utils/wiki/Cascadenik">Cascadenik</a>, <a href="http://mike.teczno.com/notes/cascadenik-openstreetmap.html">in 2008</a>. It’s largely primary colors, and has definitions for a variety of scales. Residential roads are used for texture at small scales. The road widths defined here later informed <a href="http://stamen.com/clients/cloudmade">Stamen’s design work for Cloudmade</a>.
+            <button onclick="return chooseStyle('http://tiledrawer.com/osm-style/style.mml');">Choose Bright</button>
         </p>
         
         <p>
@@ -238,9 +229,29 @@
         </p>
         <h3>Scratch</h3>
         <p class="description">
-            Demonstration style produced for the <a href="http://mapsfromscratch.com/">Where 2.0 Maps From Scratch workshop</a>, where Stamen colleague Shawn Allen and I showed how to generate road cartography from raw data and first principles. <i>Scratch</i> is designed to work at just a few scales.
+            Demonstration style produced for the <a href="http://mapsfromscratch.com/">2010 Where 2.0 Maps From Scratch workshop</a>, where Stamen colleague Shawn Allen and I showed how to generate road cartography from raw data and first principles. <i>Scratch</i> is designed to work at just a few scales.
             <button onclick="return chooseStyle('http://tiledrawer.com/mapscratch.mml');">Choose Scratch</button>
         </p>
+        
+        <!--
+        <p>
+            <a href="#" title="Choose Toner" onclick="return chooseStyle('https://github.com/Citytracking/Toner');"><img src="toner.png" width="300" height="300" alt=""></a>
+        </p>
+        <h3>Toner</h3>
+        <p class="description">
+            Designed for <a href="http://dotspotting.org">Stamen’s Dotspotting</a>, Toner is a modernist style  inspired by the look of paper photocopies and printed documents.
+            <button onclick="return chooseStyle('https://github.com/Citytracking/Toner');">Choose Toner</button>
+        </p>
+        
+        <p>
+            <a href="#" title="Choose Wintermute" onclick="return chooseStyle('https://github.com/migurski/HighRoad/');"><img src="wintermute.png" width="300" height="300" alt=""></a>
+        </p>
+        <h3>Wintermute</h3>
+        <p class="description">
+            Dark ground with light-colored water, entirely gray with motorways highlighted in bright saffron. No text. Designed for <a href="https://github.com/migurski/HighRoad/">OSM High Road</a>.
+            <button onclick="return chooseStyle('https://github.com/migurski/HighRoad/');">Choose Wintermute</button>
+        </p>
+        -->
     </div>
 
 </body>
