@@ -14,14 +14,14 @@ fi;
 # Package installation.
 #
 
-apt-get -y update
-apt-get -y upgrade
 apt-get -y install nginx
 
 # use an nginx config specifically for the setup process
 ln -sf /usr/local/tiledrawer/nginx/setup-time.conf /etc/nginx/sites-enabled/default
 /etc/init.d/nginx restart
 
+apt-get -y update
+apt-get -y upgrade
 apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
