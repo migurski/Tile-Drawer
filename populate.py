@@ -37,7 +37,7 @@ def download_file(url):
     base, ext = splitext(basename(path))
     handle, filename = mkstemp(dir='progress', prefix=base+'-', suffix=ext)
     
-    curl = 'curl', '-o', filename, '-L', url
+    curl = 'curl', '-s', '-o', filename, '-L', url
 
     print >> stderr, '+', ' '.join(curl)
 
@@ -124,7 +124,7 @@ def import_extract(filename):
 def download_coastline():
     """ Download and unpack an unprojected "good" coastline from metro.teczno.com.
     """
-    curl = 'curl -L http://osm-metro-extracts.s3.amazonaws.com/coastline-good-latlon.tar.bz2'.split()
+    curl = 'curl -sL http://osm-metro-extracts.s3.amazonaws.com/coastline-good-latlon.tar.bz2'.split()
     
     print >> stderr, '+', ' '.join(curl), '| bzcat | tar -C progress -xf -'
     
