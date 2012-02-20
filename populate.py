@@ -9,6 +9,7 @@ from urlparse import urlparse, urljoin
 from tempfile import mkstemp
 from zipfile import ZipFile
 from urllib import urlopen
+from time import strftime
 import json
 
 import cascadenik
@@ -269,6 +270,12 @@ def import_style_mml(url):
     
     json.dump(config, open('gunicorn/tilestache.cfg', 'w'), indent=2)
 
+def update_status(message):
+    """
+    """
+    status_file = open('/usr/local/tiledrawer/progress/status.txt', 'a')
+    print >> status_file, strftime('%a %b %d %H:%M:%S %Z %Y'), message
+
 if __name__ == '__main__':
     
     options, urls = parser.parse_args()
@@ -277,14 +284,24 @@ if __name__ == '__main__':
         print >> stderr, '+ chdir', dirname(__file__)
         chdir(dirname(__file__))
 
+    update_status('Preparing database (populate.py)')
+    
     import_extract('postgres/init-data/null.osm')
     import_coastline('postgres/init-data/null.shp')
     
+    update_status('Importing map style (populate.py)')
+    
     import_style(options.style)
+    
+    update_status('Importing OpenStreetMap data (populate.py)')
     
     osm_files = map(download_file, urls)
     osm_filename = combine_extracts(options.bbox, osm_files)
     import_extract(osm_filename)
     
+    update_status('Importing coastline data (populate.py)')
+    
     coast_filename = download_coastline()
     import_coastline(coast_filename, options.bbox)
+    
+    update_status('Finished (populate.py)')

@@ -22,6 +22,8 @@ apt-get -y install nginx
 ln -sf /usr/local/tiledrawer/nginx/setup-time.conf /etc/nginx/sites-enabled/default
 /etc/init.d/nginx restart
 
+date +'%a %b %d %H:%M:%S %Z %Y Installing software (setup.sh)' >> /usr/local/tiledrawer/progress/status.txt
+
 apt-get -y update
 apt-get -y upgrade
 apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
@@ -46,6 +48,8 @@ ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
 #
 # Also, move the data dir to ephemeral storage where there's more space.
 #
+
+date +'%a %b %d %H:%M:%S %Z %Y Preparing database (setup.sh)' >> /usr/local/tiledrawer/progress/status.txt
 
 /etc/init.d/postgresql stop
 
