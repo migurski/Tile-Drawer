@@ -44,16 +44,24 @@ ln -s /usr/local/tiledrawer/memcached/memcached.conf /etc/memcached.conf
 # Frederik Ramm's 2010 "Optimizing" SOTM talk:
 # http://www.geofabrik.de/media/2010-07-10-rendering-toolchain-performance.pdf
 #
+# Also, move the data dir to ephemeral storage where there's more space.
+#
+
+/etc/init.d/postgresql stop
 
 /usr/local/tiledrawer/ubuntu/sysctl.sh
 mv /etc/sysctl.conf /etc/sysctl-orig.conf
 ln -s /usr/local/tiledrawer/ubuntu/etc/sysctl.conf /etc/sysctl.conf
 
+mv /var/lib/postgresql/9.1/main /mnt/var-lib-postgres-9.1-main
+ln -s /mnt/var-lib-postgres-9.1-main /var/lib/postgresql/9.1/main
+
 mv /etc/postgresql/9.1/main/postgresql.conf /etc/postgresql/9.1/main/postgresql-orig.conf
 mv /etc/postgresql/9.1/main/pg_hba.conf /etc/postgresql/9.1/main/pg_hba-orig.conf
 ln -s /usr/local/tiledrawer/postgres/9.1/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
 ln -s /usr/local/tiledrawer/postgres/9.1/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
-/etc/init.d/postgresql restart
+
+/etc/init.d/postgresql start
 
 #
 # Build ourselves a usable OSM planet database.
