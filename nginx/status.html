@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Progress (Tile Drawer)</title>
+	<meta http-equiv="refresh" content="10" />
+    <style type="text/css" title="text/css">
+    <!--
+    
+        body
+        {
+            font-family: MyriadPro-Regular, 'Myriad Pro Regular', MyriadPro, 'Myriad Pro', trebuchet, verdana, sans-serif;
+            font-size: 15px;
+            line-height: 20px;
+
+            background-color: #eee;
+            color: #4b4f4f;
+        }
+    
+        #status
+        {
+        	border: 1px solid #cfeeed;
+        	padding: 180px 34px 34px 34px;
+        	margin: 4em auto;
+        	width: 448px;
+
+        	background-color: #fff;
+        	background-image: url(http://tiledrawer.com/chest.png);
+        	background-repeat: no-repeat;
+        	background-position: center 17px;
+        }
+    
+        #status li
+        {
+            list-style: decimal inside;
+        }
+    
+        #status li .time
+        {
+            margin-left: 1em;
+            color: #bbb;
+        }
+    
+    -->
+    </style>
+    <script type="text/javascript">
+    <!--
+    
+        function niceTime(msec)
+        {
+            if(msec > 1.5 * 60 * 60 * 1000) {
+                return (msec / 3600000).toFixed(0) + ' hours';
+                
+            } else if(msec > 1.5 * 60 * 1000) {
+                return (msec / 60000).toFixed(0) + ' minutes';
+                
+            } else if(msec > 1.5 * 1000) {
+                return (msec / 1000).toFixed(0) + ' seconds';
+
+            } else {
+                return 'a moment';
+            }
+        }
+    
+        function checkStatus()
+        {
+            var req = new XMLHttpRequest(),
+                now = new Date();
+
+            req.open('GET', 'status.txt?' + now.getTime(), false);
+            req.send(null);
+            
+            if(req.status == 200)
+            {
+                var lines = req.responseText.split('\n'),
+                    status = document.getElementById('status'),
+                    pattern = /^(.{23} \d{4}) (.+)$/;
+                
+                while(status.firstChild)
+                {
+                    status.removeChild(status.firstChild);
+                }
+                
+                for(var i = 0; i < lines.length; i++)
+                {
+                    var match = lines[i].match(pattern);
+                    
+                    if(match)
+                    {
+                        var when = new Date(match[1]),
+                            item = document.createElement('li'),
+                            name = document.createElement('span'),
+                            time = document.createElement('span');
+                        
+                        if(lines[i+1] && lines[i+1].match(pattern))
+                        {
+                            // if there's another line, show total time instead of start time
+                            var next = new Date(lines[i+1].match(pattern)[1]);
+                            time.innerHTML = niceTime(next.getTime() - when.getTime());
+
+                        } else {
+                            time.innerHTML = 'started ' + niceTime(now.getTime() - when.getTime()) + ' ago';
+                        }
+                        
+                        name.innerHTML = match[2];
+
+                        time.className = 'time';
+                        name.className = 'name';
+                        
+                        item.appendChild(name);
+                        item.appendChild(time);
+                        
+                        status.appendChild(item);
+                    }
+                }
+            }
+            
+            // check once per second
+            window.setTimeout(checkStatus, 1000);
+        }
+    
+    //-->
+    </script>
+</head>
+<body onload="checkStatus();">
+    <ol id="status">
+        <li>Setting up your tile drawer…</li>
+    </ol>
+</body>
+</html>

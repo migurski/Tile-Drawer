@@ -20,6 +20,7 @@ apt-get -y install nginx
 
 # use an nginx config specifically for the setup process
 ln -sf /usr/local/tiledrawer/nginx/setup-time.conf /etc/nginx/sites-enabled/default
+cp /usr/local/tiledrawer/nginx/status.html /usr/local/tiledrawer/progress/index.html
 /etc/init.d/nginx restart
 
 date +'%a %b %d %H:%M:%S %Z %Y Installing software (setup.sh)' >> /usr/local/tiledrawer/progress/status.txt
