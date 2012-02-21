@@ -49,8 +49,9 @@ apt-get -y install g++ cpp libicu-dev \
 ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
 pip install TileStache ModestMaps Cascadenik
 
-# recent osmosis will have to be done manually
-curl -s http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz | tar -C /usr/local -xzf -
+# recent osmosis will have to be done manually,
+# use a mirror of http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz
+curl -s http://stuff.tiledrawer.com/osmosis-0.40.1.tgz | tar -C /usr/local -xzf -
 ln -s /usr/local/osmosis-0.40.1/bin/osmosis /usr/bin/osmosis
 
 mv /etc/memcached.conf /etc/memcached-orig.conf

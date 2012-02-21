@@ -1,6 +1,7 @@
 #!/bin/sh -ex
 
-curl -sL https://github.com/downloads/mapnik/mapnik/mapnik-2.0.0.tar.bz2 | bzcat | tar -C /usr/local/tiledrawer/progress -xf -
+# use a mirror of https://github.com/downloads/mapnik/mapnik/mapnik-2.0.0.tar.bz2
+curl -sL http://stuff.tiledrawer.com/mapnik-2.0.0.tar.bz2 | bzcat | tar -C /usr/local/tiledrawer/progress -xf -
 
 cd /usr/local/tiledrawer/progress/mapnik-2.0.0
 
