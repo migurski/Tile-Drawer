@@ -31,6 +31,21 @@ apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
 
+# https://github.com/mapnik/mapnik/wiki/UbuntuInstallation/55cf72
+apt-get -y install g++ cpp libicu-dev \
+                   libboost-filesystem1.46-dev libboost-iostreams1.46-dev \
+                   libboost-program-options1.46-dev libboost-python1.46-dev \
+                   libboost-regex1.46-dev libboost-system1.46-dev \
+                   libboost-thread1.46-dev \
+                   python-dev python-nose libxml2 libxml2-dev libfreetype6 \
+                   libfreetype6-dev libjpeg62 libjpeg62-dev libltdl7 libltdl-dev \
+                   libpng12-0 libpng12-dev libgeotiff-dev libtiff4 libtiff4-dev \
+                   libtiffxx0c2 libcairo2 libcairo2-dev python-cairo python-cairo-dev \
+                   libcairomm-1.0-1 libcairomm-1.0-dev ttf-unifont ttf-dejavu \
+                   ttf-dejavu-core ttf-dejavu-extra subversion build-essential \
+                   libgdal1-dev python-gdal postgresql-9.1 postgresql-server-dev-9.1 \
+                   postgresql-contrib-9.1 postgresql-9.1-postgis libsqlite3-dev
+
 ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
 pip install TileStache ModestMaps Cascadenik
 

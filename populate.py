@@ -192,7 +192,63 @@ def import_coastline(filename, bbox=None):
 def import_style(url):
     """
     """
-    if url.endswith('.cfg'):
+    if url.endswith('.zip'):
+        update_status('Building Mapnik 2.0 (populate.py)')
+    
+        print >> stderr, '+ ./mapnik2.sh'
+        mapnik2 = Popen('./mapnik2.sh')
+        mapnik2.wait()
+        
+        from os import chmod
+        from zipfile import ZipFile
+        from StringIO import StringIO
+        from xml.etree.ElementTree import parse, SubElement
+        
+        archive = ZipFile(StringIO(urlopen(url).read()))
+        xmlname = [name for name in archive.namelist() if name.endswith('.xml')][0]
+        doc = parse(StringIO(archive.read(xmlname)))
+        
+        def add_parameter(datasource, parameter, value):
+            SubElement(datasource, 'Parameter', dict(name=parameter)).text = value
+        
+        for layer in doc.findall('Layer'):
+            for datasource in layer.findall('Datasource'):
+                params = dict( [(p.attrib['name'], p.text)
+                                for p in datasource.findall('Parameter')] )
+                
+                if params.get('type', None) == 'shape' and 'file' in params:
+                    datasource.clear()
+                    
+                    add_parameter(datasource, 'type', 'postgis')
+                    add_parameter(datasource, 'host', 'localhost')
+                    add_parameter(datasource, 'user', 'osm')
+                    add_parameter(datasource, 'dbname', 'planet_osm')
+                    add_parameter(datasource, 'table', 'fuck-yeah')
+                    add_parameter(datasource, 'estimate_extent', 'false')
+                    add_parameter(datasource, 'extent', '-20037508,-20037508,20037508,20037508')
+        
+        out = open('gunicorn/mapnik2.xml', 'w')
+        out.write('<?xml version="1.0" encoding="utf-8"?>\n')
+        doc.write(out)
+        
+        # Build a new TileStache configuration file.
+        
+        config = json.load(open('gunicorn/tilestache.cfg'))
+        
+        config['layers'] = {'tiles': {'provider': {}}}
+        layer = config['layers']['tiles']
+        
+        layer['provider']['name'] = 'mapnik'
+        layer['provider']['mapfile'] = 'mapnik2.xml'
+        layer['bounds'] = dict(zip('south west north east'.split(), options.bbox))
+        layer['bounds'].update(dict(low=0, high=18))
+        layer['preview'] = dict(zoom=15, lat=(options.bbox[0]/2 + options.bbox[2]/2), lon=(options.bbox[1]/2 + options.bbox[3]/2))
+        
+        # Done.
+        
+        json.dump(config, open('gunicorn/tilestache.cfg', 'w'), indent=2)
+    
+    elif url.endswith('.cfg'):
         return import_style_tdcfg(url)
     
     elif url.endswith('.mml'):
