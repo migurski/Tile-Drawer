@@ -4,9 +4,11 @@ from os import chdir, remove
 from sys import stderr, stdout
 from optparse import OptionParser
 from subprocess import Popen, PIPE
+from xml.etree.ElementTree import parse, SubElement
 from os.path import dirname, basename, splitext, join
 from urlparse import urlparse, urljoin
 from tempfile import mkstemp
+from StringIO import StringIO
 from zipfile import ZipFile
 from urllib import urlopen
 from time import strftime
@@ -194,65 +196,93 @@ def import_style(url):
     """
     if url.endswith('.zip'):
         update_status('Building Mapnik 2.0 (populate.py)')
-    
-        print >> stderr, '+ ./mapnik2.sh'
-        mapnik2 = Popen('./mapnik2.sh')
-        mapnik2.wait()
-        
-        from os import chmod
-        from zipfile import ZipFile
-        from StringIO import StringIO
-        from xml.etree.ElementTree import parse, SubElement
-        
-        archive = ZipFile(StringIO(urlopen(url).read()))
-        xmlname = [name for name in archive.namelist() if name.endswith('.xml')][0]
-        doc = parse(StringIO(archive.read(xmlname)))
-        
-        def add_parameter(datasource, parameter, value):
-            SubElement(datasource, 'Parameter', dict(name=parameter)).text = value
-        
-        for layer in doc.findall('Layer'):
-            for datasource in layer.findall('Datasource'):
-                params = dict( [(p.attrib['name'], p.text)
-                                for p in datasource.findall('Parameter')] )
-                
-                if params.get('type', None) == 'shape' and 'file' in params:
-                    datasource.clear()
-                    
-                    add_parameter(datasource, 'type', 'postgis')
-                    add_parameter(datasource, 'host', 'localhost')
-                    add_parameter(datasource, 'user', 'osm')
-                    add_parameter(datasource, 'dbname', 'planet_osm')
-                    add_parameter(datasource, 'table', 'fuck-yeah')
-                    add_parameter(datasource, 'estimate_extent', 'false')
-                    add_parameter(datasource, 'extent', '-20037508,-20037508,20037508,20037508')
-        
-        out = open('gunicorn/mapnik2.xml', 'w')
-        out.write('<?xml version="1.0" encoding="utf-8"?>\n')
-        doc.write(out)
-        
-        # Build a new TileStache configuration file.
-        
-        config = json.load(open('gunicorn/tilestache.cfg'))
-        
-        config['layers'] = {'tiles': {'provider': {}}}
-        layer = config['layers']['tiles']
-        
-        layer['provider']['name'] = 'mapnik'
-        layer['provider']['mapfile'] = 'mapnik2.xml'
-        layer['bounds'] = dict(zip('south west north east'.split(), options.bbox))
-        layer['bounds'].update(dict(low=0, high=18))
-        layer['preview'] = dict(zoom=15, lat=(options.bbox[0]/2 + options.bbox[2]/2), lon=(options.bbox[1]/2 + options.bbox[3]/2))
-        
-        # Done.
-        
-        json.dump(config, open('gunicorn/tilestache.cfg', 'w'), indent=2)
+        build_mapnik2()
+
+        return import_style_tilemill(url)
     
     elif url.endswith('.cfg'):
         return import_style_tdcfg(url)
     
     elif url.endswith('.mml'):
         return import_style_mml(url)
+
+def build_mapnik2():
+    """
+    """
+    print >> stderr, '+ ./mapnik2.sh'
+    mapnik2 = Popen('./mapnik2.sh')
+    mapnik2.wait()
+
+def get_shapefile_tablename(filepath):
+    """
+    """
+    filename = basename(filepath)
+    
+    if filename == 'tile-drawer.osm2psgsql-polygon.shp':
+        return 'planet_osm_polygon'
+    
+    elif filename == 'tile-drawer.osm2psgsql-point.shp':
+        return 'planet_osm_point'
+    
+    elif filename == 'tile-drawer.osm2psgsql-line.shp':
+        return 'planet_osm_line'
+    
+    elif filename == 'tile-drawer.coastline.shp':
+        return 'coastline'
+    
+    else:
+        # wat
+        return ''
+
+def import_style_tilemill(url):
+    """ Load a zipped-up stylesheet created from Tilemill.
+    """
+    
+    archive = ZipFile(StringIO(urlopen(url).read()))
+    xmlname = [name for name in archive.namelist() if name.endswith('.xml')][0]
+    doc = parse(StringIO(archive.read(xmlname)))
+    
+    # Map shapefiles to PostGIS datasources.
+    
+    def add_parameter(datasource, parameter, value):
+        SubElement(datasource, 'Parameter', dict(name=parameter)).text = value
+    
+    for layer in doc.findall('Layer'):
+        for ds in layer.findall('Datasource'):
+            params = dict( [(p.attrib['name'], p.text)
+                            for p in ds.findall('Parameter')] )
+            
+            if params.get('type', None) == 'shape' and 'file' in params:
+                ds.clear()
+
+                add_parameter(ds, 'type', 'postgis')
+                add_parameter(ds, 'host', 'localhost')
+                add_parameter(ds, 'user', 'osm')
+                add_parameter(ds, 'dbname', 'planet_osm')
+                add_parameter(ds, 'table', get_shapefile_tablename(params['file']))
+                add_parameter(ds, 'extent', '-20037508,-20037508,20037508,20037508')
+                add_parameter(ds, 'estimate_extent', 'false')
+    
+    out = open('gunicorn/mapnik2.xml', 'w')
+    out.write('<?xml version="1.0" encoding="utf-8"?>\n')
+    doc.write(out)
+    
+    # Build a new TileStache configuration file.
+    
+    config = json.load(open('gunicorn/tilestache.cfg'))
+    
+    config['layers'] = {'tiles': {'provider': {}}}
+    layer = config['layers']['tiles']
+    
+    layer['provider']['name'] = 'mapnik'
+    layer['provider']['mapfile'] = 'mapnik2.xml'
+    layer['bounds'] = dict(zip('south west north east'.split(), options.bbox))
+    layer['bounds'].update(dict(low=0, high=18))
+    layer['preview'] = dict(zoom=15, lat=(options.bbox[0]/2 + options.bbox[2]/2), lon=(options.bbox[1]/2 + options.bbox[3]/2))
+    
+    # Done.
+    
+    json.dump(config, open('gunicorn/tilestache.cfg', 'w'), indent=2)
 
 def import_style_tdcfg(url):
     """ Load a Cascadenik style and its constituent pieces from a URL.
