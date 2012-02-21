@@ -370,24 +370,26 @@ if __name__ == '__main__':
         print >> stderr, '+ chdir', dirname(__file__)
         chdir(dirname(__file__))
 
-    update_status('Preparing database (populate.py)')
+    try:
+        update_status('Preparing database (populate.py)')
+        import_extract('postgres/init-data/null.osm')
+        import_coastline('postgres/init-data/null.shp')
+        
+        update_status('Importing map style (populate.py)')
+        import_style(options.style)
+        
+        update_status('Importing OpenStreetMap data (populate.py)')
+        osm_files = map(download_file, urls)
+        osm_filename = combine_extracts(options.bbox, osm_files)
+        import_extract(osm_filename)
+        
+        update_status('Importing coastline data (populate.py)')
+        coast_filename = download_coastline()
+        import_coastline(coast_filename, options.bbox)
+        
+    except:
+        update_status('Something went wrong, sorry (populate.py)')
+        exit(1)
     
-    import_extract('postgres/init-data/null.osm')
-    import_coastline('postgres/init-data/null.shp')
-    
-    update_status('Importing map style (populate.py)')
-    
-    import_style(options.style)
-    
-    update_status('Importing OpenStreetMap data (populate.py)')
-    
-    osm_files = map(download_file, urls)
-    osm_filename = combine_extracts(options.bbox, osm_files)
-    import_extract(osm_filename)
-    
-    update_status('Importing coastline data (populate.py)')
-    
-    coast_filename = download_coastline()
-    import_coastline(coast_filename, options.bbox)
-    
-    update_status('Finished (populate.py)')
+    else:
+        update_status('Finished (populate.py)')
