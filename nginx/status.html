@@ -16,13 +16,18 @@
             background-color: #eee;
             color: #4b4f4f;
         }
+        
+        #status, #explanation
+        {
+        	margin: 34px auto;
+        	width: 448px;
+        }
     
         #status
         {
         	border: 1px solid #cfeeed;
         	padding: 180px 34px 34px 34px;
-        	margin: 4em auto;
-        	width: 448px;
+        	margin-top: 4em;
 
         	background-color: #fff;
         	background-image: url(http://tiledrawer.com/chest.png);
@@ -126,5 +131,19 @@
     <ol id="status">
         <li>Setting up your tile drawer…</li>
     </ol>
+    
+    <p id="explanation">
+        <b>How Long Will This Take?</b>
+        <br>
+        <b>It depends.</b> The first step, software installation, can take
+        3-5 minutes. If you are using a style from Tilemill and the optional
+        Mapnik 2.0 is required, building it can take as long as 10-20 minutes.
+        If you find yourself waiting longer than that for either of these
+        steps, it’s sometimes possible for installation to get hung up. The
+        easiest way to address this it to start with a fresh Tile Drawer.
+        Finally, the process of importing OpenStreetMap and coastline data
+        can take anywhere from minutes to hours depending on the size of your
+        requested area.
+    </p>
 </body>
 </html>
