@@ -27,7 +27,7 @@ date +'%a %b %d %H:%M:%S %Z %Y Installing software (setup.sh)' >> /usr/local/til
 
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
+apt-get -y install curl unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
 
@@ -74,7 +74,7 @@ ln -s /usr/local/tiledrawer/postgres/9.1/pg_hba.conf /etc/postgresql/9.1/main/pg
 #
 
 sudo -u postgres createuser -DRS osm
-sudo -u postgres createdb -O osm planet_osm
+sudo -u postgres createdb -T template0 -E UTF8 -O osm planet_osm
 
 psql -U postgres planet_osm < /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
 psql -U postgres planet_osm < /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
