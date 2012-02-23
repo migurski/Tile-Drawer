@@ -195,16 +195,16 @@ def import_style(url):
     """
     """
     if url.endswith('.zip'):
+        import_style_tilemill(url)
+    
         update_status('Building Mapnik 2.0 (populate.py)')
         build_mapnik2()
 
-        return import_style_tilemill(url)
-    
     elif url.endswith('.cfg'):
-        return import_style_tdcfg(url)
+        import_style_tdcfg(url)
     
     elif url.endswith('.mml'):
-        return import_style_mml(url)
+        import_style_mml(url)
 
 def build_mapnik2():
     """
