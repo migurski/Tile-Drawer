@@ -27,7 +27,7 @@ date +'%a %b %d %H:%M:%S %Z %Y Installing software (setup.sh)' >> /usr/local/til
 
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install curl unzip gunicorn memcached gdal-bin python-mapnik \
+apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
 
