@@ -30,9 +30,12 @@ apt-get -y upgrade
 apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
+                   protobuf-compiler libprotobuf-dev libtokyocabinet-dev \
+                   libgeos-c1 libgeos-dev python-dev python-psycopg2 \
+                   build-essential
 
 ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
-pip install TileStache ModestMaps Cascadenik
+pip install TileStache ModestMaps Cascadenik shapely imposm.parser imposm
 
 # recent osmosis will have to be done manually,
 # use a mirror of http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.40.1.tgz

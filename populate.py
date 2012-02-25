@@ -82,7 +82,7 @@ def combine_extracts(bbox, files):
     
     return filename
 
-def import_extract(filename):
+def import_extract_osm2pgsql(filename):
     """ Shell out to osm2pgsql to import extract file to Postgis.
     """
 
@@ -122,6 +122,23 @@ def import_extract(filename):
     psql.wait()
     
     if psql.returncode:
+        raise Exception('wuh-woh')
+    
+def import_extract_imposm(filename):
+    """ Shell out to imposm to import extract file to Postgis.
+    """
+    imposm = 'imposm --read --write --table-prefix=imposm_'.split()
+    imposm += '--connect postgis://osm:@127.0.0.1/planet_osm'.split()
+    imposm += ['--cache-dir=/usr/local/tiledrawer/progress', filename]
+    
+    print >> stderr, '+', ' '.join(imposm)
+    
+    logfile = open('progress/imposm.log', 'w')
+    imposm = Popen(imposm, stdout=logfile, stderr=logfile)
+    
+    imposm.wait()
+    
+    if imposm.returncode:
         raise Exception('wuh-woh')
 
 def download_coastline():
@@ -372,7 +389,7 @@ if __name__ == '__main__':
 
     try:
         update_status('Preparing database (populate.py)')
-        import_extract('postgres/init-data/null.osm')
+        import_extract_osm2pgsql('postgres/init-data/null.osm')
         import_coastline('postgres/init-data/null.shp')
         
         update_status('Importing map style (populate.py)')
@@ -381,7 +398,8 @@ if __name__ == '__main__':
         update_status('Importing OpenStreetMap data (populate.py)')
         osm_files = map(download_file, urls)
         osm_filename = combine_extracts(options.bbox, osm_files)
-        import_extract(osm_filename)
+        import_extract_osm2pgsql(osm_filename)
+        import_extract_imposm(osm_filename)
         
         update_status('Importing coastline data (populate.py)')
         coast_filename = download_coastline()
