@@ -1,6 +1,20 @@
 #!/bin/sh -x
 
 #
+# Provide Tilestache a spacious directory to cache tiles.
+#
+
+if [ -d /mnt ]; then
+    mkdir /mnt/cache
+    ln -s /mnt/cache /var/cache/tilestache
+    chmod a+rwxt /mnt/cache
+else
+    mkdir /tmp/cache
+    ln -s /tmp/cache /var/cache/tilestache
+    chmod a+rwxt /tmp/cache
+fi
+
+#
 # Start TileStache under gunicorn, and switch nginx configuration to tile proxy.
 #
 
