@@ -27,7 +27,7 @@ date +'%a %b %d %H:%M:%S %Z %Y Installing software (setup.sh)' >> /usr/local/til
 
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
+apt-get -y install zip unzip gunicorn memcached gdal-bin python-mapnik \
                    python-pip python-imaging python-gevent python-memcache \
                    osm2pgsql postgresql-9.1-postgis openjdk-6-jre-headless \
                    protobuf-compiler libprotobuf-dev libtokyocabinet-dev \
@@ -35,6 +35,8 @@ apt-get -y install unzip gunicorn memcached gdal-bin python-mapnik \
                    build-essential
 
 ln -s /usr/lib/postgresql/9.1/bin/shp2pgsql /usr/bin/shp2pgsql # really?
+ln -s /usr/lib/postgresql/9.1/bin/pgsql2shp /usr/bin/pgsql2shp # seriously?
+
 pip install TileStache ModestMaps Cascadenik shapely imposm.parser imposm
 
 # recent osmosis will have to be done manually,
