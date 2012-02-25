@@ -244,6 +244,87 @@ def get_shapefile_tablename(filepath):
     elif filename == 'tile-drawer.osm2psgsql-line.shp':
         return 'planet_osm_line'
     
+    elif filename == 'tile-drawer.imposm-admin.shp':
+        return 'imposm_admin'
+    
+    elif filename == 'tile-drawer.imposm-aeroways.shp':
+        return 'imposm_aeroways'
+    
+    elif filename == 'tile-drawer.imposm-amenities.shp':
+        return 'imposm_amenities'
+    
+    elif filename == 'tile-drawer.imposm-buildings.shp':
+        return 'imposm_buildings'
+    
+    elif filename == 'tile-drawer.imposm-landusages-gen0.shp':
+        return 'imposm_landusages_gen0'
+    
+    elif filename == 'tile-drawer.imposm-landusages-gen1.shp':
+        return 'imposm_landusages_gen1'
+    
+    elif filename == 'tile-drawer.imposm-landusages.shp':
+        return 'imposm_landusages'
+    
+    elif filename == 'tile-drawer.imposm-mainroads-gen0.shp':
+        return 'imposm_mainroads_gen0'
+    
+    elif filename == 'tile-drawer.imposm-mainroads-gen1.shp':
+        return 'imposm_mainroads_gen1'
+    
+    elif filename == 'tile-drawer.imposm-mainroads.shp':
+        return 'imposm_mainroads'
+    
+    elif filename == 'tile-drawer.imposm-minorroads.shp':
+        return 'imposm_minorroads'
+    
+    elif filename == 'tile-drawer.imposm-motorways-gen0.shp':
+        return 'imposm_motorways_gen0'
+    
+    elif filename == 'tile-drawer.imposm-motorways-gen1.shp':
+        return 'imposm_motorways_gen1'
+    
+    elif filename == 'tile-drawer.imposm-motorways.shp':
+        return 'imposm_motorways'
+    
+    elif filename == 'tile-drawer.imposm-places.shp':
+        return 'imposm_places'
+    
+    elif filename == 'tile-drawer.imposm-railways-gen0.shp':
+        return 'imposm_railways_gen0'
+    
+    elif filename == 'tile-drawer.imposm-railways-gen1.shp':
+        return 'imposm_railways_gen1'
+    
+    elif filename == 'tile-drawer.imposm-railways.shp':
+        return 'imposm_railways'
+    
+    elif filename == 'tile-drawer.imposm-roads-gen0.shp':
+        return 'imposm_roads_gen0'
+    
+    elif filename == 'tile-drawer.imposm-roads-gen1.shp':
+        return 'imposm_roads_gen1'
+    
+    elif filename == 'tile-drawer.imposm-roads.shp':
+        return 'imposm_roads'
+    
+    elif filename == 'tile-drawer.imposm-transport-areas.shp':
+        return 'imposm_transport_areas'
+    
+    elif filename == 'tile-drawer.imposm-transport-points.shp':
+        return 'imposm_transport_points'
+    
+    elif filename == 'tile-drawer.imposm-waterareas-gen0.shp':
+        return 'imposm_waterareas_gen0'
+    
+    elif filename == 'tile-drawer.imposm-waterareas-gen1.shp':
+        return 'imposm_waterareas_gen1'
+    
+    elif filename == 'tile-drawer.imposm-waterareas.shp':
+        return 'imposm_waterareas'
+    
+    elif filename == 'tile-drawer.imposm-waterways.shp':
+        return 'imposm_waterways'
+    
     elif filename == 'tile-drawer.coastline.shp':
         return 'coastline'
     
